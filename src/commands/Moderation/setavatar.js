@@ -1,7 +1,7 @@
 const { SlashCommandBuilder } = require("@discordjs/builders");
-const fetch = require("node-fetch").default; // Import node-fetch and use .default
+const fetch = require("node-fetch").default;
 
-const ownerId = process.env.discord_bot_owner_id; // Load the bot owner ID from environment variables
+const ownerId = process.env.discord_bot_owner_id;
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -40,6 +40,9 @@ module.exports = {
       });
     }
 
+    // Defer the reply to prevent the interaction from timing out
+    await interaction.deferReply({ ephemeral: true });
+
     // Fetch the avatar to ensure it's a valid image
     try {
       const response = await fetch(avatarUrl);
@@ -48,35 +51,16 @@ module.exports = {
       // Change the bot's avatar
       await client.user.setAvatar(buffer);
 
-      // Reply with a simple text response confirming the avatar change
-      await interaction.reply({
+      // Edit the deferred reply with a confirmation message
+      await interaction.editReply({
         content: `Bot avatar changed successfully to: ${avatarUrl}`,
-        ephemeral: true,
       });
     } catch (error) {
       console.error("Error setting bot avatar:", error);
-      await interaction.reply({
+      // Edit the deferred reply with an error message
+      await interaction.editReply({
         content: "There was an error changing the bot's avatar.",
-        ephemeral: true,
       });
-    }
-    async function changeAvatar(bot, avatarData, retries = 3, delay = 5000) {
-      try {
-        await bot.user.setAvatar(avatarData);
-        console.log("Bot avatar changed successfully!");
-      } catch (error) {
-        if (retries > 0) {
-          console.error(
-            `Error setting bot avatar: ${error.message}. Retrying...`
-          );
-          await new Promise((resolve) => setTimeout(resolve, delay));
-          await changeAvatar(bot, avatarData, retries - 1, delay * 2);
-        } else {
-          console.error(
-            `Failed to set bot avatar after multiple attempts: ${error.message}`
-          );
-        }
-      }
     }
   },
 };
