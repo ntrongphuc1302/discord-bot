@@ -1,7 +1,7 @@
 const { SlashCommandBuilder } = require("@discordjs/builders");
 const fetch = require("node-fetch").default; // Import node-fetch and use .default
 
-const ownerId = process.env.owner_id; // Load the bot owner ID from environment variables
+const ownerId = process.env.discord_bot_owner_id; // Load the bot owner ID from environment variables
 
 module.exports = {
   data: new SlashCommandBuilder()

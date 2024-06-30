@@ -1,6 +1,6 @@
 const { SlashCommandBuilder } = require("@discordjs/builders");
 
-const ownerId = process.env.owner_id; // Replace with your Discord user ID
+const ownerId = process.env.discord_bot_owner_id; // Replace with your Discord user ID
 
 module.exports = {
   data: new SlashCommandBuilder()
