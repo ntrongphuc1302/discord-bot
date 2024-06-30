@@ -30,10 +30,26 @@ module.exports = {
 
     const isBoosting = member.premiumSince ? "Yes" : "No";
     const joinDate = member.joinedAt
-      ? member.joinedAt.toLocaleDateString("en-GB")
+      ? member.joinedAt.toLocaleString("en-US", {
+          timeZone: "Asia/Ho_Chi_Minh",
+          day: "2-digit",
+          month: "2-digit",
+          year: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
+        })
       : "Unknown";
     const creationDate = user.createdAt
-      ? user.createdAt.toLocaleDateString("en-GB")
+      ? user.createdAt.toLocaleString("vi-VN", {
+          timeZone: "Asia/Ho_Chi_Minh",
+          day: "2-digit",
+          month: "2-digit",
+          year: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
+        })
       : "Unknown";
 
     const permissions = new PermissionsBitField(member.permissions.bitfield);
@@ -50,18 +66,21 @@ module.exports = {
       .addFields(
         { name: "Username", value: user.username, inline: true },
         { name: "User ID", value: user.id, inline: true },
+        { name: "\u200B", value: "\u200B", inline: true }, // Empty field for spacing
+        { name: "Global permissions", value: globalPermissions, inline: true },
         {
           name: "Roles",
           value: roles.length > 1024 ? `${roles.slice(0, 1021)}...` : roles,
           inline: true,
         },
+        { name: "\u200B", value: "\u200B", inline: true }, // Empty field for spacing
         {
           name: "Nickname",
           value: member.nickname || "No nickname",
           inline: true,
         },
         { name: "Is boosting", value: isBoosting, inline: true },
-        { name: "Global permissions", value: globalPermissions, inline: true },
+        { name: "\u200B", value: "\u200B", inline: true }, // Empty field for spacing
         { name: "Joined this server on", value: joinDate, inline: true },
         { name: "Account created on", value: creationDate, inline: true }
       )
