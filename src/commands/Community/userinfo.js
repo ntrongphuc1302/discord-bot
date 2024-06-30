@@ -69,7 +69,10 @@ module.exports = {
           value: `\`\`\`${user.username}\`\`\``,
           inline: true,
         },
-        { name: "User ID", value: `\`\`\`${user.id}\`\`\`` }, // Adjusted to stay on one line
+        {
+          name: "User ID",
+          value: `\`\`\`${user.id}\`\`\``,
+        },
         {
           name: "Global permissions",
           value: `\`\`\`${globalPermissions}\`\`\``,
