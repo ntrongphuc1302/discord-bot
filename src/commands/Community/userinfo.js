@@ -61,7 +61,7 @@ module.exports = {
 
     const embed = new EmbedBuilder()
       .setTitle(`${member.displayName}'s Information`)
-      .setThumbnail(user.displayAvatarURL({ dynamic: true }))
+      .setThumbnail(user.displayAvatarURL({ dynamic: true, size: 4096 }))
       .setColor(highestRoleColor)
       .addFields(
         {

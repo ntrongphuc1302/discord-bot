@@ -10,7 +10,7 @@ module.exports = {
 
   async execute(interaction, client) {
     const user = interaction.options.getUser("user") || client.user;
-    const avatarUrl = user.displayAvatarURL({ format: "png", size: 1024 });
+    const avatarUrl = user.displayAvatarURL({ format: "png", size: 4096 });
 
     // Fetch member from guild to get role information
     const guild = interaction.guild;
@@ -26,7 +26,10 @@ module.exports = {
       .setColor(highestRoleColor)
       .setFooter({
         text: `Requested by ${interaction.user.tag}`,
-        iconURL: interaction.user.displayAvatarURL({ dynamic: true }),
+        iconURL: interaction.user.displayAvatarURL({
+          dynamic: true,
+          size: 1024,
+        }),
       });
 
     await interaction.reply({
