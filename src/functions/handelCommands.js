@@ -1,5 +1,6 @@
 const { REST } = require("@discordjs/rest");
 const { Routes } = require("discord-api-types/v9");
+const { SlashCommandBuilder } = require("discord.js");
 const fs = require("fs");
 
 const clientId = process.env.discord_bot_id;
@@ -15,7 +16,19 @@ module.exports = (client) => {
       for (const file of commandFiles) {
         const command = require(`../commands/${folder}/${file}`);
         client.commands.set(command.data.name, command);
-        client.commandArray.push(command.data.toJSON());
+        // client.commandArray.push(command.data.toJSON());
+
+        if (command.data instanceof SlashCommandBuilder) {
+          client.commandArray.push(command.data.toJSON());
+        } else {
+          client.commandArray.push(command.data);
+        }
+
+        // await client.commandArray.forEach(async (value) => {
+        //   if (value.name == "") {
+        //     console.log(JSON.stringify(value));
+        //   }
+        // });
       }
     }
 

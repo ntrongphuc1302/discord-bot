@@ -1,5 +1,4 @@
-const { SlashCommandBuilder } = require("@discordjs/builders");
-const { EmbedBuilder } = require("discord.js");
+const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -8,6 +7,7 @@ module.exports = {
     .addUserOption((option) =>
       option.setName("user").setDescription("The user to get the avatar of")
     ),
+
   async execute(interaction, client) {
     const user = interaction.options.getUser("user") || client.user;
     const avatarUrl = user.displayAvatarURL({ format: "png", size: 1024 });
