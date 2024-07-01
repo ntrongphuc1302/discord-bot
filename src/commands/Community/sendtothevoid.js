@@ -1,19 +1,34 @@
-const {
-  ContextMenuCommandBuilder,
-  ApplicationCommandType,
-  EmbedBuilder,
-} = require("discord.js");
+const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
 
 module.exports = {
-  data: new ContextMenuCommandBuilder()
-    .setName("Send to the void")
-    .setType(ApplicationCommandType.Message),
+  data: new SlashCommandBuilder()
+    .setName("sendtovoid")
+    .setDescription("Send a message to the void")
+    .addStringOption((option) =>
+      option
+        .setName("messageid")
+        .setDescription("The ID of the message to send to the void")
+        .setRequired(true)
+    ),
 
   async execute(interaction) {
-    const message = interaction.targetMessage;
-    const channel = interaction.guild.channels.cache.get("1088139188576211025");
+    const messageId = interaction.options.getString("messageid");
+    const channel = interaction.channel;
 
-    if (!channel) {
+    // Fetch the message
+    const message = await channel.messages.fetch(messageId);
+    if (!message) {
+      return interaction.reply({
+        content: "The specified message does not exist in this channel.",
+        ephemeral: true,
+      });
+    }
+
+    const targetChannel = interaction.guild.channels.cache.get(
+      "1088139188576211025"
+    );
+
+    if (!targetChannel) {
       return interaction.reply({
         content: "The target channel does not exist.",
         ephemeral: true,
@@ -35,7 +50,7 @@ module.exports = {
     //   iconURL: interaction.user.displayAvatarURL({ dynamic: true }),
     // });
 
-    await channel.send({ embeds: [embed] });
+    await targetChannel.send({ embeds: [embed] });
     await message.delete();
     await interaction.reply({
       content: "Message sent to the void and deleted.",
