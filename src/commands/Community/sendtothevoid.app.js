@@ -46,9 +46,9 @@ module.exports = {
 
       await webhookClient.delete(); // Cleanup: Delete the webhook after use
     } catch (error) {
-      console.error("Error sending message to backroom:", error);
+      console.error("Error sending message to NSFW:", error);
       await interaction.reply({
-        content: "Failed to send message to the backroom.",
+        content: "Failed to send message to NSFW.",
         ephemeral: true,
       });
     }
