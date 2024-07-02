@@ -7,7 +7,7 @@ const {
 
 module.exports = {
   data: new ContextMenuCommandBuilder()
-    .setName("Get User Info")
+    .setName("Get Info")
     .setType(ApplicationCommandType.User),
 
   async execute(interaction) {
