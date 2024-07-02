@@ -1,7 +1,6 @@
 const {
   ContextMenuCommandBuilder,
   ApplicationCommandType,
-  EmbedBuilder,
 } = require("discord.js");
 
 module.exports = {
@@ -20,28 +19,33 @@ module.exports = {
       });
     }
 
-    // Fetch the member object to get the display name
-    const member = await interaction.guild.members.fetch(message.author.id);
+    try {
+      const webhookClient = await channel.createWebhook({
+        name: "Backroom Webhook", // Ensure 'name' is explicitly set
+        avatar: interaction.user.displayAvatarURL({ dynamic: true }),
+      });
 
-    const embed = new EmbedBuilder()
-      .setAuthor({
-        name: member.displayName,
-        iconURL: message.author.displayAvatarURL({ dynamic: true }),
-      })
-      .setTimestamp();
+      // Send message content or file attachments via webhook
+      await webhookClient.send({
+        content: message.content,
+        username: interaction.member.displayName,
+        avatarURL: interaction.user.displayAvatarURL({ dynamic: true }),
+        files: message.attachments.map((attachment) => attachment.url),
+      });
 
-    // Check if message content is not empty
-    if (message.content) {
-      embed.setDescription(message.content);
-    } else {
-      embed.setDescription("(No content)");
+      await message.delete();
+      await interaction.reply({
+        content: "Message sent to the backroom and deleted.",
+        ephemeral: true,
+      });
+
+      await webhookClient.delete(); // Cleanup: Delete the webhook after use
+    } catch (error) {
+      console.error("Error sending message to backroom:", error);
+      await interaction.reply({
+        content: "Failed to send message to the backroom.",
+        ephemeral: true,
+      });
     }
-
-    await channel.send({ embeds: [embed] });
-    await message.delete();
-    await interaction.reply({
-      content: "Message sent to the backroom and deleted.",
-      ephemeral: true,
-    });
   },
 };
