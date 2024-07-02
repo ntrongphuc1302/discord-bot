@@ -5,7 +5,7 @@ const {
 
 module.exports = {
   data: new ContextMenuCommandBuilder()
-    .setName("Send to the backroom")
+    .setName("Send to nsfw")
     .setType(ApplicationCommandType.Message),
 
   async execute(interaction) {
@@ -20,16 +20,21 @@ module.exports = {
     }
 
     try {
+      let member = message.member;
+      if (!member) {
+        member = await interaction.guild.members.fetch(message.author.id); // Fetch member if not available
+      }
+
       const webhookClient = await channel.createWebhook({
-        name: "Backroom Webhook", // Ensure 'name' is explicitly set
-        avatar: interaction.user.displayAvatarURL({ dynamic: true }),
+        name: member.displayName, // Use display name of the member
+        avatar: message.author.displayAvatarURL({ dynamic: true }), // Use author's avatar
       });
 
       // Send message content or file attachments via webhook
       await webhookClient.send({
         content: message.content,
-        username: interaction.member.displayName,
-        avatarURL: interaction.user.displayAvatarURL({ dynamic: true }),
+        username: member.displayName,
+        avatarURL: message.author.displayAvatarURL({ dynamic: true }),
         files: message.attachments.map((attachment) => attachment.url),
       });
 
