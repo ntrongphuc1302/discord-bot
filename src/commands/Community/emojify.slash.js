@@ -14,6 +14,7 @@ module.exports = {
     ),
   async execute(interaction) {
     const text = interaction.options.getString("text");
+    const channel = interaction.channel;
 
     let emojiText = text
       .toLowerCase()
@@ -24,9 +25,37 @@ module.exports = {
       })
       .join("");
 
-    if (emojiText.length > 2000)
+    if (emojiText.length > 2000) {
       emojiText = "Text is too long to convert to emojis!";
+    }
 
-    await interaction.reply({ content: emojiText });
+    try {
+      // Create a webhook in the current channel
+      const webhookClient = await channel.createWebhook({
+        name: interaction.member.displayName, // Use display name of the member
+        avatar: interaction.user.displayAvatarURL({ dynamic: true }), // Use user's avatar
+      });
+
+      // Send the emoji text via webhook
+      await webhookClient.send({
+        content: emojiText,
+        username: interaction.member.displayName,
+        avatarURL: interaction.user.displayAvatarURL({ dynamic: true }),
+      });
+
+      await interaction.reply({
+        content: "Your message has been emojified!",
+        ephemeral: true,
+      });
+
+      // Cleanup: Delete the webhook after use
+      await webhookClient.delete();
+    } catch (error) {
+      console.error("Error sending emojified message:", error);
+      await interaction.reply({
+        content: "Failed to send emojified message.",
+        ephemeral: true,
+      });
+    }
   },
 };
