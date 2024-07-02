@@ -5,7 +5,7 @@ const {
 
 module.exports = {
   data: new ContextMenuCommandBuilder()
-    .setName("Send to nsfw")
+    .setName("Send to NSFW")
     .setType(ApplicationCommandType.Message),
 
   async execute(interaction) {
