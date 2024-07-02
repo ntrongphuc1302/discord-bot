@@ -40,7 +40,7 @@ module.exports = {
 
       await message.delete();
       await interaction.reply({
-        content: "Message sent to the backroom and deleted.",
+        content: "Message sent to NSFW and deleted.",
         ephemeral: true,
       });
 
