@@ -13,10 +13,7 @@ module.exports = {
 
   async execute(interaction) {
     try {
-      await interaction
-        .deferReply
-        // { ephemeral: true }
-        ();
+      await interaction.deferReply();
 
       // Get all files in the Community folder
       const communityFolderPath = path.join(__dirname, "..", "Community");
