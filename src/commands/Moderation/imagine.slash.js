@@ -68,8 +68,8 @@ module.exports = {
         .setImage(output[0])
         .setColor("#591bfe")
         .setFooter({
-          text: `Requested by ${interaction.member.user.username}`, // Change to display name
-          iconURL: interaction.member.user.displayAvatarURL({ dynamic: true }),
+          text: `Requested by ${interaction.member.displayName}`,
+          iconURL: interaction.user.displayAvatarURL({ dynamic: true }),
         });
 
       await interaction.editReply({
