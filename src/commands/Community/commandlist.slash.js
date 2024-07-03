@@ -40,7 +40,12 @@ module.exports = {
       const embed = new EmbedBuilder()
         .setTitle(`Slash Commands [${commands.length}]`) // Adding count dynamically
         .setDescription("Here is a list of all available slash commands.")
-        .addFields(commands);
+        .addFields(commands)
+        .setFooter({
+          text: `Requested by ${interaction.user.displayName}`,
+          iconURL: interaction.user.displayAvatarURL({ dynamic: true }),
+        })
+        .setTimestamp();
 
       // Send the embed as a reply to the interaction
       await interaction.editReply({ embeds: [embed.toJSON()] }); // Convert embed to JSON before sending

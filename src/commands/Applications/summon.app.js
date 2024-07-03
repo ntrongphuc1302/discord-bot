@@ -73,6 +73,10 @@ module.exports = {
       .setColor("#ff0000")
       .setThumbnail(user.displayAvatarURL({ dynamic: true, size: 4096 }))
       .setImage(summonGif)
+      .setFooter({
+        text: `Requested by ${interaction.user.displayName}`,
+        iconURL: interaction.user.displayAvatarURL({ dynamic: true }),
+      })
       .setTimestamp();
 
     await interaction.reply({ embeds: [embed] });

@@ -27,12 +27,13 @@ module.exports = {
         .setImage(avatarUrl)
         .setColor(highestRoleColor)
         .setFooter({
-          text: `Requested by ${interaction.user.tag}`,
+          text: `Requested by ${interaction.user.displayName}`,
           iconURL: interaction.user.displayAvatarURL({
             dynamic: true,
-            size: 1024,
+            size: 4096,
           }),
-        });
+        })
+        .setTimestamp();
 
       await interaction.reply({
         embeds: [embed],

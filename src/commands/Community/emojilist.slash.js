@@ -28,7 +28,7 @@ module.exports = {
             emojiChunks.length
           })`
         )
-        .setColor(0x00ae86)
+        .setColor("#591bfe")
         .setDescription(
           chunk
             .map(
@@ -38,7 +38,12 @@ module.exports = {
                 }:\``
             )
             .join("\n")
-        );
+        )
+        .setFooter({
+          text: `Requested by ${interaction.user.displayName}`,
+          iconURL: interaction.user.displayAvatarURL({ dynamic: true }),
+        })
+        .setTimestamp();
       currentIndex += chunk.length;
       return embed;
     });

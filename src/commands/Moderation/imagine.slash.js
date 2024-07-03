@@ -68,9 +68,10 @@ module.exports = {
         .setImage(output[0])
         .setColor("#591bfe")
         .setFooter({
-          text: `Requested by ${interaction.member.displayName}`,
+          text: `Requested by ${interaction.user.displayName}`,
           iconURL: interaction.user.displayAvatarURL({ dynamic: true }),
-        });
+        })
+        .setTimestamp();
 
       await interaction.editReply({
         embeds: [resultEmbed],

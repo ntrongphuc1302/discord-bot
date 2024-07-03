@@ -116,9 +116,10 @@ module.exports = {
         }
       )
       .setFooter({
-        text: `Requested by ${interaction.user.tag}`,
+        text: `Requested by ${interaction.user.displayName}`,
         iconURL: interaction.user.displayAvatarURL({ dynamic: true }),
-      });
+      })
+      .setTimestamp();
 
     await interaction.reply({
       embeds: [embed],

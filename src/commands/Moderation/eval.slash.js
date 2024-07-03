@@ -22,7 +22,12 @@ module.exports = {
     async function sendMessage(message) {
       const embed = new EmbedBuilder()
         .setColor("#591bfe")
-        .setDescription(message);
+        .setDescription(message)
+        .setFooter({
+          text: `Requested by ${interaction.user.displayName}`,
+          iconURL: interaction.user.displayAvatarURL({ dynamic: true }),
+        })
+        .setTimestamp();
 
       await interaction.reply({ embeds: [embed] }, { ephemeral: true });
     }
