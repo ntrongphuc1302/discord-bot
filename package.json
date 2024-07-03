@@ -26,6 +26,7 @@
     "node-fetch": "^2.7.0",
     "nodemon": "^3.1.4",
     "pm2": "^5.4.1",
+    "puppeteer": "^22.12.1",
     "replicate": "^0.30.2",
     "superagent": "^9.0.2"
   }

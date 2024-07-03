@@ -6,19 +6,21 @@ module.exports = {
     .setDescription("Get information about the server."),
 
   async execute(interaction) {
-    const guild = interaction.guild;
+    const { guild } = interaction;
+    const { members } = guild;
+    const { name, ownerId, memberCount } = guild;
 
-    // Count members and bots
-    let memberCount = 0;
-    let botCount = 0;
+    // Verifycation level
+    let baseVerificationLevel = guild.verificationLevel;
 
-    guild.members.cache.forEach((member) => {
-      if (member.user.bot) {
-        botCount++;
-      } else {
-        memberCount++;
-      }
-    });
+    if (baseVerificationLevel == 0) baseVerificationLevel = "None";
+    if (baseVerificationLevel == 1) baseVerificationLevel = "Low";
+    if (baseVerificationLevel == 2) baseVerificationLevel = "Medium";
+    if (baseVerificationLevel == 3) baseVerificationLevel = "High";
+    if (baseVerificationLevel == 4) baseVerificationLevel = "Very High";
+
+    // Get server owner
+    const owner = guild.members.cache.get(ownerId);
 
     // Get all server roles excluding @everyone
     const roles = guild.roles.cache
@@ -38,29 +40,6 @@ module.exports = {
 
     // Calculate total emojis and stickers count
     const emonsticCount = totalEmojis + stickers;
-
-    // Calculate categories and channels counts
-    const categoriesCount = guild.channels.cache.filter(
-      (channel) => channel.type === "GUILD_CATEGORY"
-    ).size;
-    const textChannelsCount = guild.channels.cache.filter(
-      (channel) => channel.type === "GUILD_TEXT"
-    ).size;
-    const voiceChannelsCount = guild.channels.cache.filter(
-      (channel) => channel.type === "GUILD_VOICE"
-    ).size;
-    const announcementChannelsCount = guild.channels.cache.filter(
-      (channel) => channel.type === "GUILD_NEWS"
-    ).size;
-    const stageChannelsCount = guild.channels.cache.filter(
-      (channel) => channel.type === "GUILD_STAGE_VOICE"
-    ).size;
-    const totalchannelCount =
-      categoriesCount +
-      textChannelsCount +
-      voiceChannelsCount +
-      announcementChannelsCount +
-      stageChannelsCount;
 
     // Format creation date
     const now = new Date();
@@ -87,20 +66,29 @@ module.exports = {
       .setColor("#591bfe") // Set embed color to #591bfe
       .setThumbnail(guild.iconURL({ dynamic: true, size: 4096 })) // Server avatar as thumbnail
       .addFields(
-        { name: "Server name", value: `\`\`\`${guild.name}\`\`\`` },
+        { name: "Server name", value: `\`\`\`${name}\`\`\`` },
         { name: "Server ID", value: `\`\`\`${guild.id}\`\`\`` },
-        { name: "Server owner ID", value: `\`\`\`${guild.ownerId}\`\`\`` },
+        {
+          name: "Server owner",
+          value: `\`\`\`${owner.user.displayName} | ${owner.user.tag}\`\`\``,
+        }, // Mention server owner
+        { name: "Server region", value: `\`\`\`Vietnam\`\`\`` },
+        {
+          name: "Server verification level",
+          // value: `\`\`\`${baseVerificationLevel}\`\`\``,
+          value: `\`\`\`Very High\`\`\``,
+        },
         {
           name: `Server boosts [ ${guild.premiumSubscriptionCount} ]`,
           value: `\`\`\`Level: ${guild.premiumTier}\`\`\``,
         },
         {
-          name: `Server members [ ${memberCount + botCount} ]`,
-          value: `\`\`\`Members: ${memberCount} | Bots: ${botCount}\`\`\``,
+          name: `Server members [ ${memberCount} ]`,
+          value: `\`\`\`Members:  | Bots:\`\`\``,
         },
         {
-          name: `Server categories and channels [ ${totalchannelCount} ]`,
-          value: `\`\`\`Categories: ${categoriesCount} | Text: ${textChannelsCount} | Voice: ${voiceChannelsCount} | Announcement: ${announcementChannelsCount} | Stage: ${stageChannelsCount}\`\`\``,
+          name: `Server categories and channels [  ]`,
+          value: `\`\`\`Categories:  | Text:  | Voice:  | Announcement:  | Stage: \`\`\``,
         },
         {
           name: `Server emojis and stickers [ ${emonsticCount} ]`,
