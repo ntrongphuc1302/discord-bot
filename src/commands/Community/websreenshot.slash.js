@@ -50,9 +50,10 @@ module.exports = {
       });
     } catch (e) {
       console.error(e);
-      await interaction.editReply(
-        "An error occurred while taking the screenshot."
-      );
+      await interaction.editReply({
+        content: "An error occurred while taking the screenshot.",
+        ephemeral: true,
+      });
     }
   },
 };

@@ -83,7 +83,7 @@ module.exports = {
         .setDescription("```" + error + "```")
         .setColor(0xe32424);
 
-      await interaction.editReply({ embeds: [errEmbed] });
+      await interaction.editReply({ embeds: [errEmbed], ephemeral: true });
     }
   },
 };
