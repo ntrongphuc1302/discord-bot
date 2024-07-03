@@ -32,7 +32,7 @@ module.exports = {
   },
 
   async execute(interaction) {
-    //Permission check
+    // Permission check
     if (interaction.member.id !== process.env.discord_bot_owner_id) {
       return await interaction.reply({
         content: "You do not have permission to use this command.",
@@ -64,7 +64,7 @@ module.exports = {
 
       const resultEmbed = new EmbedBuilder()
         .setTitle("Image Generated")
-        .addFields({ name: "Prompt", value: prompt })
+        .addFields({ name: "Prompt", value: `\`\`\`${prompt}\`\`\`` })
         .setImage(output[0])
         .setColor("#591bfe")
         .setFooter({
