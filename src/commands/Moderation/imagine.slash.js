@@ -32,6 +32,14 @@ module.exports = {
   },
 
   async execute(interaction) {
+    //Permission check
+    if (interaction.member.id !== process.env.discord_bot_owner_id) {
+      return await interaction.reply({
+        content: "You do not have permission to use this command.",
+        ephemeral: true,
+      });
+    }
+
     try {
       await interaction.deferReply();
 

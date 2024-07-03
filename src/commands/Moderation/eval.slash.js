@@ -11,6 +11,14 @@ module.exports = {
         .setRequired(true)
     ),
   async execute(interaction) {
+    //Permission check
+    if (interaction.member.id !== process.env.discord_bot_owner_id) {
+      return await interaction.reply({
+        content: "You do not have permission to use this command.",
+        ephemeral: true,
+      });
+    }
+
     async function sendMessage(message) {
       const embed = new EmbedBuilder()
         .setColor("#591bfe")
@@ -18,9 +26,6 @@ module.exports = {
 
       await interaction.reply({ embeds: [embed] }, { ephemeral: true });
     }
-
-    if (interaction.member.id !== "358614972223193089")
-      return sendMessage("You do not have permission to use this command.");
 
     const { options } = interaction;
 
