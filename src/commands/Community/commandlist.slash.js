@@ -13,13 +13,13 @@ module.exports = {
 
       // Get all files in the Community folder
       const communityFolderPath = path.join(__dirname, "..", "Community");
-      console.log("Community folder path:", communityFolderPath);
+      // console.log("Community folder path:", communityFolderPath);
       const commandFiles = fs.readdirSync(communityFolderPath);
-      console.log("Command files:", commandFiles);
+      // console.log("Command files:", commandFiles);
 
       // Filter command files to include only .js files
       const jsFiles = commandFiles.filter((file) => file.endsWith(".js"));
-      console.log("JavaScript command files:", jsFiles);
+      // console.log("JavaScript command files:", jsFiles);
 
       // Map valid command names to embed fields
       const commands = jsFiles.map((file) => {
@@ -34,7 +34,7 @@ module.exports = {
         return null; // Return null for commands not found (should not happen if file names match command names)
       });
 
-      console.log("Mapped commands:", commands);
+      // console.log("Mapped commands:", commands);
 
       // Create the embed with the list of commands
       const embed = new EmbedBuilder()
