@@ -3,11 +3,8 @@ const {
   ApplicationCommandType,
   EmbedBuilder,
 } = require("discord.js");
-const {
-  summonMessages,
-  dmMessages,
-  summonGifs,
-} = require("../../data/summon.js");
+const superagent = require("superagent");
+const { summonMessages, dmMessages } = require("../../data/summon.js");
 
 module.exports = {
   data: new ContextMenuCommandBuilder()
@@ -19,7 +16,33 @@ module.exports = {
 
     const summonMessage =
       summonMessages[Math.floor(Math.random() * summonMessages.length)];
-    const summonGif = summonGifs[Math.floor(Math.random() * summonGifs.length)];
+
+    // Fetch summon GIF from Tenor API
+    const apikey = process.env.tenor_api_key;
+    const clientkey = "Discord Bot";
+    const lmt = 50;
+    const query = "summon";
+
+    const link =
+      "https://tenor.googleapis.com/v2/search?q=" +
+      query +
+      "&key=" +
+      apikey +
+      "&client_key=" +
+      clientkey +
+      "&limit=" +
+      lmt;
+
+    let summonGif = "";
+    try {
+      const response = await superagent.get(link);
+      const results = response.body.results;
+      const choice = Math.floor(Math.random() * results.length);
+      summonGif = results[choice].media_formats.gif.url;
+    } catch (error) {
+      console.error("Error fetching GIF from Tenor API:", error);
+      summonGif = ""; // Fallback in case of an error
+    }
 
     const formattedDmMessages = dmMessages.map((message) =>
       message

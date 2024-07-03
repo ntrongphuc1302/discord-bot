@@ -19,9 +19,7 @@ module.exports = {
     const query = options.getString("query");
     const apikey = process.env.tenor_api_key;
     const clientkey = "Discord Bot";
-    const lmt = 100;
-
-    let choice = Math.floor(Math.random() * lmt);
+    const lmt = 50;
 
     const link =
       "https://tenor.googleapis.com/v2/search?q=" +
@@ -34,13 +32,35 @@ module.exports = {
       lmt;
 
     const output = await superagent.get(link).catch((err) => {});
+    let gifUrl;
 
     try {
-      await interaction.editReply({ content: output.body.results[choice].url });
+      gifUrl = output.body.results[Math.floor(Math.random() * lmt)].url;
     } catch (err) {
-      return await interaction.editReply({
+      await interaction.editReply({
         content: `No gifs found with the query \`${query}\``,
       });
+      return;
     }
+
+    const channel = interaction.channel;
+    const user = interaction.member;
+
+    // Create a webhook
+    const webhook = await channel.createWebhook({
+      name: user.displayName,
+      avatar: user.user.displayAvatarURL({ dynamic: true }),
+    });
+
+    // Send the message via the webhook
+    await webhook.send({
+      content: gifUrl,
+    });
+
+    // Delete the webhook after sending the message
+    await webhook.delete();
+
+    // Delete the original deferred reply
+    await interaction.deleteReply();
   },
 };
