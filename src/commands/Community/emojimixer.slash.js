@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
+const { SlashCommandBuilder } = require("discord.js");
 const superagent = require("superagent");
 const onlyEmoji = require("emoji-aware").onlyEmoji;
 
@@ -44,19 +44,24 @@ module.exports = {
         return await interaction.editReply({ content: response });
       }
 
-      // Get the user who requested the command
       const requester = interaction.member.user;
 
-      // Create embed with mixed emoji image and footer with requester's display name
-      const embed = new EmbedBuilder()
-        .setColor("#591bfe")
-        .setImage(output.body.results[0].url)
-        .setFooter({
-          text: `Requested by ${requester.displayName}`,
-          icon_url: requester.displayAvatarURL({ dynamic: true }),
-        });
+      // Create a webhook with the author's display name and avatar
+      const webhook = await interaction.channel.createWebhook({
+        name: requester.displayName,
+        avatar: requester.displayAvatarURL({ dynamic: true }),
+      });
 
-      await interaction.editReply({ embeds: [embed] });
+      // Send the mixed emoji image via the webhook
+      await webhook.send({
+        content: output.body.results[0].url,
+      });
+
+      // Delete the webhook after sending the message
+      await webhook.delete();
+
+      // Delete the original deferred reply
+      await interaction.deleteReply();
     } catch (error) {
       console.error("Error fetching emojis:", error);
       await interaction.editReply({
