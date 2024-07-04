@@ -39,7 +39,7 @@ module.exports = {
         .setDescription("Here is a list of all available slash commands.")
         .addFields(commands)
         .setFooter({
-          text: `Requested by ${interaction.user.username}`,
+          text: `Requested by ${interaction.user.displayName}`,
           iconURL: interaction.user.displayAvatarURL({ dynamic: true }),
         })
         .setTimestamp();
