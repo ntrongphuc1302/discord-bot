@@ -37,3 +37,31 @@ const commandFolders = fs.readdirSync("./src/commands");
   client.handleCommands(commandFolders, "./src/commands");
   client.login(process.env.discord_bot_token);
 })();
+
+// Interactoin Logging
+client.on("interactionCreate", async (interaction) => {
+  if (!interaction) return;
+  if (!interaction.isChatInputCommand()) return;
+  else {
+    const channel = await client.channels.cache.get("1258454088790835301"); // Channel ID to log the command
+    const server = interaction.guild.name;
+    const serverInviteLink = "http://discord.gg/suyMRyKjrv";
+    const channelUsedID = interaction.channel.id;
+    const userID = interaction.user.id;
+
+    const embed = new EmbedBuilder()
+      .setColor("#591bfe")
+      .setTitle("Command Used")
+      .addFields({ name: "Server", value: `[${server}](${serverInviteLink})` })
+      .addFields({ name: "Channel", value: `<#${channelUsedID}>` })
+      .addFields({ name: "User", value: `<@${userID}>` })
+      .addFields({ name: "Command", value: `\`\`\`${interaction}\`\`\`` })
+      .setTimestamp()
+      .setFooter({
+        text: `Command used by ${interaction.user.displayName}`,
+        iconURL: `${interaction.user.displayAvatarURL({ dynamic: true })}`,
+      });
+
+    await channel.send({ embeds: [embed] });
+  }
+});
