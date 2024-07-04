@@ -41,13 +41,14 @@ const commandFolders = fs.readdirSync("./src/commands");
 // Interactoin Logging
 client.on("interactionCreate", async (interaction) => {
   if (!interaction) return;
-  if (!interaction.isChatInputCommand()) return;
+  if (!interaction.isCommand()) return;
   else {
     const channel = await client.channels.cache.get("1258454088790835301"); // Channel ID to log the command
     const server = interaction.guild.name;
     const serverInviteLink = "http://discord.gg/suyMRyKjrv";
     const channelUsedID = interaction.channel.id;
     const userID = interaction.user.id;
+    const commandName = interaction.commandName; // Get the command name
 
     const embed = new EmbedBuilder()
       .setColor("#591bfe")
@@ -55,7 +56,8 @@ client.on("interactionCreate", async (interaction) => {
       .addFields({ name: "Server", value: `[${server}](${serverInviteLink})` })
       .addFields({ name: "Channel", value: `<#${channelUsedID}>` })
       .addFields({ name: "User", value: `<@${userID}>` })
-      .addFields({ name: "Command", value: `\`\`\`${interaction}\`\`\`` })
+      .addFields({ name: "Command Name", value: `\`\`\`${commandName}\`\`\`` })
+      .addFields({ name: "Command Used", value: `\`\`\`${interaction}\`\`\`` })
       .setTimestamp()
       .setFooter({
         text: `Command used by ${interaction.user.displayName}`,
