@@ -13,42 +13,39 @@ module.exports = {
 
       // Get all files in the Community folder
       const communityFolderPath = path.join(__dirname, "..", "Community");
-      // console.log("Community folder path:", communityFolderPath);
-      const commandFiles = fs.readdirSync(communityFolderPath);
-      // console.log("Command files:", commandFiles);
+      const commandFiles = fs
+        .readdirSync(communityFolderPath)
+        .filter((file) => file.endsWith(".js"));
 
-      // Filter command files to include only .js files
-      const jsFiles = commandFiles.filter((file) => file.endsWith(".js"));
-      // console.log("JavaScript command files:", jsFiles);
+      // Filter valid command objects
+      const commands = commandFiles
+        .map((file) => {
+          const commandPath = path.join(communityFolderPath, file);
+          const command = require(commandPath);
 
-      // Map valid command names to embed fields
-      const commands = jsFiles.map((file) => {
-        const commandName = file.replace(".slash.js", ""); // Remove .slash.js extension
-        const command = client.commands.get(commandName); // Get command object by name
-        if (command) {
-          return {
-            name: `/${command.data.name}`, // Ensure name is a string
-            value: command.data.description || "No description provided", // Provide default if description is missing
-          };
-        }
-        return null; // Return null for commands not found (should not happen if file names match command names)
-      });
-
-      // console.log("Mapped commands:", commands);
+          if (command && command.data && command.data.name) {
+            return {
+              name: `/${command.data.name}`,
+              value: command.data.description || "No description provided",
+            };
+          }
+          return null;
+        })
+        .filter((cmd) => cmd !== null);
 
       // Create the embed with the list of commands
       const embed = new EmbedBuilder()
-        .setTitle(`Slash Commands [${commands.length}]`) // Adding count dynamically
+        .setTitle(`Slash Commands [${commands.length}]`)
         .setDescription("Here is a list of all available slash commands.")
         .addFields(commands)
         .setFooter({
-          text: `Requested by ${interaction.user.displayName}`,
+          text: `Requested by ${interaction.user.username}`,
           iconURL: interaction.user.displayAvatarURL({ dynamic: true }),
         })
         .setTimestamp();
 
       // Send the embed as a reply to the interaction
-      await interaction.editReply({ embeds: [embed.toJSON()] }); // Convert embed to JSON before sending
+      await interaction.editReply({ embeds: [embed] });
     } catch (error) {
       console.error("Error fetching or sending slash command help:", error);
       await interaction.editReply({
@@ -58,6 +55,8 @@ module.exports = {
     }
   },
 };
+
+// All slash commands
 
 // const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
 
@@ -88,7 +87,12 @@ module.exports = {
 //       const embed = new EmbedBuilder()
 //         .setTitle(`Slash Commands [${commands.length}]`)
 //         .setDescription("Here is a list of all available slash commands.")
-//         .addFields(commands);
+//         .addFields(commands)
+//         .setFooter({
+//         text: `Requested by ${interaction.user.username}`,
+//         iconURL: interaction.user.displayAvatarURL({ dynamic: true }),
+//          })
+//          .setTimestamp();
 
 //       // Send the embed as a reply to the interaction
 //       await interaction.editReply({ embeds: [embed.toJSON()] }); // Convert embed to JSON before sending

@@ -14,19 +14,18 @@ module.exports = {
     ),
 
   async execute(interaction) {
-    await interaction.deferReply();
+    await interaction.deferReply({ ephemeral: true });
 
     const { options } = interaction;
     const eString = options.getString("emojis");
     const input = onlyEmoji(eString);
 
-    if (!input.length) {
+    if (input.length < 2) {
       return await interaction.editReply({
-        content: "Please provide valid emojis.",
+        content: "Please provide two valid emojis.",
+        ephemeral: true,
       });
     }
-
-    const response = `One or both of the emojis you provided are invalid.`;
 
     try {
       const output = await superagent
@@ -40,11 +39,14 @@ module.exports = {
           q: input.join("_"),
         });
 
-      if (!output.body.results[0]) {
-        return await interaction.editReply({ content: response });
+      if (!output.body.results.length) {
+        return await interaction.editReply({
+          content: "One or both of the emojis you provided are invalid.",
+          ephemeral: true,
+        });
       }
 
-      const requester = interaction.member.user;
+      const requester = interaction.user;
 
       // Create a webhook with the author's display name and avatar
       const webhook = await interaction.channel.createWebhook({
@@ -66,6 +68,7 @@ module.exports = {
       console.error("Error fetching emojis:", error);
       await interaction.editReply({
         content: "Failed to fetch emojis. Please try again later.",
+        ephemeral: true,
       });
     }
   },

@@ -20,13 +20,21 @@ module.exports = {
       .toLowerCase()
       .split("")
       .map((letter) => {
+        const regex = /^[A-Za-z]+$/; // Only convert letters to emojis
         if (letter === " ") return "     "; // Five spaces for a single space
-        else return `:regional_indicator_${letter}:`;
+
+        if (regex.test(letter)) {
+          return `:regional_indicator_${letter}:`;
+        } else return letter;
       })
       .join("");
 
     if (emojiText.length > 2000) {
-      emojiText = "Text is too long to convert to emojis!";
+      await interaction.reply({
+        content: "Text is too long to convert to emojis!",
+        ephemeral: true,
+      });
+      return;
     }
 
     try {
