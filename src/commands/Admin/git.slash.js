@@ -97,7 +97,8 @@ module.exports = {
 
         const resultEmbed = new EmbedBuilder()
           .setTitle("Git Command Execution")
-          .setDescription("```" + output + "```")
+          .addFields({ name: "Command", value: `\`${gitCommand}\`` })
+          .addFields({ name: "Output", value: `\`${output}\`` })
           .setColor("#591bfe")
           .setFooter({
             text: `Executed by ${interaction.user.displayName}`,
