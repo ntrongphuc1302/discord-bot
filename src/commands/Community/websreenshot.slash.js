@@ -27,6 +27,8 @@ module.exports = {
       await page.goto(website);
       await page.setViewport({ width: 2560, height: 1440 });
 
+      await new Promise((resolve) => setTimeout(resolve, 3000));
+
       const screenshot = await page.screenshot();
       await browser.close();
 
