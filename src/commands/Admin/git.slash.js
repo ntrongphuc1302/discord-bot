@@ -11,7 +11,7 @@ module.exports = {
     description: "Execute Git commands",
     options: [
       {
-        name: "subcommand",
+        name: "command",
         description: "Select the Git command to execute",
         type: ApplicationCommandOptionType.String,
         required: true,
@@ -51,34 +51,31 @@ module.exports = {
     try {
       await interaction.deferReply();
 
-      const subcommand = interaction.options.getString("subcommand");
-      let command;
+      const command = interaction.options.getString("command");
+      let gitCommand;
 
-      switch (subcommand) {
+      switch (command) {
         case "add":
-          command = "git add .";
+          gitCommand = "git add .";
           break;
         case "commit":
-          const commitMessage = interaction.options.getString("message");
+          let commitMessage = interaction.options.getString("message");
           if (!commitMessage) {
-            return await interaction.editReply({
-              content: "Commit message is required for commit subcommand.",
-              ephemeral: true,
-            });
+            commitMessage = "update"; // Default commit message
           }
-          command = `git commit -m "${commitMessage}"`;
+          gitCommand = `git commit -m "${commitMessage}"`;
           break;
         case "push":
-          command = "git push -u origin main";
+          gitCommand = "git push -u origin main";
           break;
         default:
           return await interaction.editReply({
-            content: "Invalid subcommand.",
+            content: "Invalid command option.",
             ephemeral: true,
           });
       }
 
-      exec(command, (error, stdout, stderr) => {
+      exec(gitCommand, (error, stdout, stderr) => {
         if (error) {
           console.error(`Error executing command: ${error}`);
           const errEmbed = new EmbedBuilder()
