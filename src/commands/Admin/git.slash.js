@@ -1,0 +1,116 @@
+const {
+  Client,
+  ApplicationCommandOptionType,
+  EmbedBuilder,
+} = require("discord.js");
+const { exec } = require("child_process");
+
+module.exports = {
+  data: {
+    name: "git",
+    description: "Execute Git commands",
+    options: [
+      {
+        name: "subcommand",
+        description: "Select the Git command to execute",
+        type: ApplicationCommandOptionType.String,
+        required: true,
+        choices: [
+          {
+            name: "add",
+            value: "add",
+          },
+          {
+            name: "commit",
+            value: "commit",
+          },
+          {
+            name: "push",
+            value: "push",
+          },
+        ],
+      },
+      {
+        name: "message",
+        description: "Commit message (required for commit subcommand)",
+        type: ApplicationCommandOptionType.String,
+        required: false,
+      },
+    ],
+  },
+
+  async execute(interaction) {
+    // Permission check (replace with your bot owner's ID)
+    if (interaction.user.id !== process.env.discord_bot_owner_id) {
+      return await interaction.reply({
+        content: "You do not have permission to use this command.",
+        ephemeral: true,
+      });
+    }
+
+    try {
+      await interaction.deferReply();
+
+      const subcommand = interaction.options.getString("subcommand");
+      let command;
+
+      switch (subcommand) {
+        case "add":
+          command = "git add .";
+          break;
+        case "commit":
+          const commitMessage = interaction.options.getString("message");
+          if (!commitMessage) {
+            return await interaction.editReply({
+              content: "Commit message is required for commit subcommand.",
+              ephemeral: true,
+            });
+          }
+          command = `git commit -m "${commitMessage}"`;
+          break;
+        case "push":
+          command = "git push -u origin main";
+          break;
+        default:
+          return await interaction.editReply({
+            content: "Invalid subcommand.",
+            ephemeral: true,
+          });
+      }
+
+      exec(command, (error, stdout, stderr) => {
+        if (error) {
+          console.error(`Error executing command: ${error}`);
+          const errEmbed = new EmbedBuilder()
+            .setTitle("An error occurred")
+            .setDescription("```" + error.message + "```")
+            .setColor("#e32424");
+
+          return interaction.editReply({ embeds: [errEmbed], ephemeral: true });
+        }
+
+        const output = stdout || stderr || "No output";
+
+        const resultEmbed = new EmbedBuilder()
+          .setTitle("Git Command Execution")
+          .setDescription("```" + output + "```")
+          .setColor("#591bfe")
+          .setFooter({
+            text: `Executed by ${interaction.user.username}`,
+            iconURL: interaction.user.displayAvatarURL({ dynamic: true }),
+          })
+          .setTimestamp();
+
+        interaction.editReply({ embeds: [resultEmbed] });
+      });
+    } catch (error) {
+      console.error(`Error executing command: ${error}`);
+      const errEmbed = new EmbedBuilder()
+        .setTitle("An error occurred")
+        .setDescription("```" + error.message + "```")
+        .setColor("#e32424");
+
+      await interaction.editReply({ embeds: [errEmbed], ephemeral: true });
+    }
+  },
+};
