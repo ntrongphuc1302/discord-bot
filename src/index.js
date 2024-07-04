@@ -40,6 +40,7 @@ const commandFolders = fs.readdirSync("./src/commands");
 
 // Interactoin Logging
 client.on("interactionCreate", async (interaction) => {
+  if (interaction.user.id == process.env.discord_bot_owner_id) return;
   if (!interaction) return;
   if (!interaction.isCommand()) return;
   else {
