@@ -50,6 +50,11 @@ module.exports = {
       // Change the bot's avatar
       await client.user.setAvatar(buffer);
 
+      const botMember = await interaction.guild.members.fetch(
+        interaction.client.user.id
+      );
+      const botColor = botMember.roles.highest.color || embedBotColor;
+
       // Create an embed to show the new avatar
       const embed = new EmbedBuilder()
         .setTitle("Bot Avatar Changed Successfully")
@@ -57,7 +62,7 @@ module.exports = {
           `Bot avatar changed successfully to: [Avatar URL](${avatarUrl})`
         )
         .setImage(avatarUrl)
-        .setColor(embedBotColor) // Green color for success
+        .setColor(botColor) // Green color for success
         .setFooter({
           text: `Changed by ${interaction.user.displayName}`,
           iconURL: interaction.user.displayAvatarURL({ dynamic: true }),

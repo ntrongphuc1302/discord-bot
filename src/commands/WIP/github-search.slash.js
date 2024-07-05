@@ -79,8 +79,13 @@ module.exports = {
         .setStyle(ButtonStyle.Link)
     );
 
+    const botMember = await interaction.guild.members.fetch(
+      interaction.client.user.id
+    );
+    const botColor = botMember.roles.highest.color || embedBotColor;
+
     const embed = new EmbedBuilder()
-      .setColor(embedBotColor)
+      .setColor(botColor)
       .setTitle(`GitHub Repository Matching: \`${query}\``)
       .setDescription(format.join("\n"))
       .setFooter({

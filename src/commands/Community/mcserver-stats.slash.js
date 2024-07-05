@@ -24,8 +24,13 @@ module.exports = {
 
     var msg;
     async function sendMessage(message, button, updated) {
+      const botMember = await interaction.guild.members.fetch(
+        interaction.client.user.id
+      );
+      const botColor = botMember.roles.highest.color || embedBotColor;
+
       const embed = new EmbedBuilder()
-        .setColor(embedBotColor)
+        .setColor(botColor)
         .setDescription(message)
         .setFooter({
           text: `Requested by ${interaction.user.displayName}`,

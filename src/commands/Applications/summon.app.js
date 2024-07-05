@@ -15,7 +15,10 @@ module.exports = {
   async execute(interaction) {
     const user = interaction.targetUser;
     const member = interaction.guild.members.cache.get(interaction.user.id);
-    const highestRoleColor = member.roles.highest.color || embedBotColor; // Default to red if no role color
+    const botMember = await interaction.guild.members.fetch(
+      interaction.client.user.id
+    );
+    const botColor = botMember.roles.highest.color || embedBotColor;
 
     const summonMessage =
       summonMessages[Math.floor(Math.random() * summonMessages.length)];
@@ -73,7 +76,7 @@ module.exports = {
         iconURL: interaction.user.displayAvatarURL({ dynamic: true }),
       })
       .setDescription(`${summonMessage} ${user}`)
-      .setColor(highestRoleColor)
+      .setColor(botColor)
       .setThumbnail(user.displayAvatarURL({ dynamic: true, size: 4096 }))
       .setImage(summonGif)
       .setFooter({

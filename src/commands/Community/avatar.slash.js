@@ -16,14 +16,15 @@ module.exports = {
     const guild = interaction.guild;
     const member = await guild.members.fetch(user.id);
 
-    // Get highest role color
-    const highestRole = member.roles.highest;
-    const highestRoleColor = highestRole.color || "#FFFFFF"; // Default to white if no color is set
+    const botMember = await interaction.guild.members.fetch(
+      interaction.client.user.id
+    );
+    const botColor = botMember.roles.highest.color || embedBotColor;
 
     const embed = new EmbedBuilder()
       .setTitle(`${user.username}'s Avatar`)
       .setImage(avatarUrl)
-      .setColor(highestRoleColor)
+      .setColor(botColor)
       .setFooter({
         text: `Requested by ${interaction.user.displayName}`,
         iconURL: interaction.user.displayAvatarURL({ dynamic: true }),

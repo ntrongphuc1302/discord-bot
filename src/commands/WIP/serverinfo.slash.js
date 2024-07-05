@@ -62,9 +62,14 @@ module.exports = {
       creationDate += ` (less than a year ago)`;
     }
 
+    const botMember = await interaction.guild.members.fetch(
+      interaction.client.user.id
+    );
+    const botColor = botMember.roles.highest.color || embedBotColor;
+
     const embed = new EmbedBuilder()
       .setTitle("SERVER INFORMATION")
-      .setColor(embedBotColor) // Set embed color to #591bfe
+      .setColor(botColor) // Set embed color to #591bfe
       .setThumbnail(guild.iconURL({ dynamic: true, size: 4096 })) // Server avatar as thumbnail
       .addFields(
         { name: "Server name", value: `\`\`\`${name}\`\`\`` },

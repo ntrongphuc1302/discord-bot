@@ -29,6 +29,11 @@ module.exports = {
       });
     }
 
+    const botMember = await interaction.guild.members.fetch(
+      interaction.client.user.id
+    );
+    const botColor = botMember.roles.highest.color || embedBotColor;
+
     try {
       await interaction.deferReply();
 
@@ -50,7 +55,7 @@ module.exports = {
         const resultEmbed = new EmbedBuilder()
           .setTitle("Terminal Command Execution")
           .setDescription("```" + output + "```")
-          .setColor(embedDark)
+          .setColor(botColor)
           .setFooter({
             text: `Executed by ${interaction.user.username}`,
             iconURL: interaction.user.displayAvatarURL({ dynamic: true }),

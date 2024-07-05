@@ -75,7 +75,10 @@ module.exports = {
 
     // Fetch the member object for the user who initiated the interaction
     const member = interaction.guild.members.cache.get(interaction.user.id);
-    const highestRoleColor = member.roles.highest.color || embedBotColor; // Default to red if no role color
+    const botMember = await interaction.guild.members.fetch(
+      interaction.client.user.id
+    );
+    const botColor = botMember.roles.highest.color || embedBotColor;
 
     // Create summon embed
     const embed = new EmbedBuilder()
@@ -84,7 +87,7 @@ module.exports = {
         iconURL: interaction.user.displayAvatarURL({ dynamic: true }),
       })
       .setDescription(`${summonMessage} ${user}`)
-      .setColor(highestRoleColor)
+      .setColor(botColor)
       .setThumbnail(user.displayAvatarURL({ dynamic: true, size: 4096 }))
       .setImage(summonGif)
       .setFooter({

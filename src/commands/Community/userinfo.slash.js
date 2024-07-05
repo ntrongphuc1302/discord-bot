@@ -1,8 +1,5 @@
-const {
-  SlashCommandBuilder,
-  EmbedBuilder,
-  PermissionsBitField,
-} = require("discord.js");
+const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
+const { owner_id, embedBotColor } = require("../../config");
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -22,11 +19,14 @@ module.exports = {
     const roles =
       member.roles.cache
         .filter((role) => role.id !== interaction.guild.id) // Remove @everyone role
+        .sort((a, b) => b.position - a.position) // Sort roles from highest to lowest
         .map((role) => role.name)
         .join(", ") || "No roles";
 
-    const highestRole = member.roles.highest;
-    const highestRoleColor = highestRole.color || "#FFFFFF"; // Default to white if no color is set
+    const botMember = await interaction.guild.members.fetch(
+      interaction.client.user.id
+    );
+    const botColor = botMember.roles.highest.color || embedBotColor;
 
     const isBoosting = member.premiumSince ? "Yes" : "No";
     const joinDate = member.joinedAt ? formatDate(member.joinedAt) : "Unknown";
@@ -34,7 +34,6 @@ module.exports = {
       ? formatDate(user.createdAt)
       : "Unknown";
 
-    const permissions = new PermissionsBitField(member.permissions.bitfield);
     let globalPermissions = "Standard User";
 
     // Check specific roles for special permissions
@@ -47,7 +46,7 @@ module.exports = {
     }
 
     // Check if the user is the server owner
-    if (user.id === "358614972223193089") {
+    if (user.id === owner_id) {
       globalPermissions = "👑 Server Owner";
     }
 
@@ -62,7 +61,7 @@ module.exports = {
     const embed = new EmbedBuilder()
       .setTitle(`${member.displayName}'s Information`)
       .setThumbnail(user.displayAvatarURL({ dynamic: true, size: 4096 }))
-      .setColor(highestRoleColor)
+      .setColor(botColor)
       .addFields(
         {
           name: "Username",

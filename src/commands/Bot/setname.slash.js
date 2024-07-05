@@ -23,13 +23,18 @@ module.exports = {
     // Get the new name from the command options
     const newName = interaction.options.getString("name");
 
+    const botMember = await interaction.guild.members.fetch(
+      interaction.client.user.id
+    );
+    const botColor = botMember.roles.highest.color || embedBotColor;
+
     // Change the bot's name
     try {
       await client.user.setUsername(newName);
       const embed = new EmbedBuilder()
         .setTitle("Bot Name Changed")
         .addFields({ name: "New Name", value: `\`\`\`${newName}\`\`\`` })
-        .setColor(embedBotColor)
+        .setColor(botColor)
         .setFooter({
           text: `Changed by ${interaction.user.displayName}`,
           iconURL: interaction.user.displayAvatarURL({ dynamic: true }),

@@ -55,8 +55,13 @@ module.exports = {
 
       value.shift();
 
+      const botMember = await interaction.guild.members.fetch(
+        interaction.client.user.id
+      );
+      const botColor = botMember.roles.highest.color || embedBotColor;
+
       const embed = new EmbedBuilder()
-        .setColor(embedBotColor)
+        .setColor(botColor)
         .setTitle("Bot Response:")
         // .setDescription(`\`\`\`${value.join("\n\n\n\n")}\`\`\``)
         .setDescription(`${value.join("\n")}`)

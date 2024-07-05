@@ -38,9 +38,14 @@ module.exports = {
         name: "screenshot.png",
       });
 
+      const botMember = await interaction.guild.members.fetch(
+        interaction.client.user.id
+      );
+      const botColor = botMember.roles.highest.color || embedBotColor;
+
       const embed = new EmbedBuilder()
         .setImage("attachment://screenshot.png")
-        .setColor(embedBotColor)
+        .setColor(botColor)
         .setFooter({
           text: `Requested by ${interaction.user.displayName}`,
           iconURL: interaction.user.displayAvatarURL({ dynamic: true }),

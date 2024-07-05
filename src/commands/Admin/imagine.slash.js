@@ -50,6 +50,11 @@ module.exports = {
         auth: process.env.replicate_api_key,
       });
 
+      const botMember = await interaction.guild.members.fetch(
+        interaction.client.user.id
+      );
+      const botColor = botMember.roles.highest.color || embedBotColor;
+
       const prompt = interaction.options.getString("prompt");
       const model = interaction.options.getString("model") || models[0].value;
 
@@ -67,7 +72,7 @@ module.exports = {
         .setTitle("Image Generated")
         .addFields({ name: "Prompt", value: `\`\`\`${prompt}\`\`\`` })
         .setImage(output[0])
-        .setColor(embedBotColor)
+        .setColor(botColor)
         .setFooter({
           text: `Requested by ${interaction.user.displayName}`,
           iconURL: interaction.user.displayAvatarURL({ dynamic: true }),

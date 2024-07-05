@@ -22,6 +22,12 @@ module.exports = {
     const emojiChunks = chunkArray([...emojis.values()], maxEmojisPerEmbed);
 
     let currentIndex = 0; // Start index for emoji numbering
+
+    const botMember = await interaction.guild.members.fetch(
+      interaction.client.user.id
+    );
+    const botColor = botMember.roles.highest.color || embedBotColor;
+
     const embeds = emojiChunks.map((chunk, index) => {
       const embed = new EmbedBuilder()
         .setTitle(
@@ -29,7 +35,7 @@ module.exports = {
             emojiChunks.length
           })`
         )
-        .setColor(embedBotColor)
+        .setColor(botColor)
         .setDescription(
           chunk
             .map(

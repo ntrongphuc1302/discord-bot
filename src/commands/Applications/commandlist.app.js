@@ -31,11 +31,17 @@ module.exports = {
         };
       });
 
+      const botMember = await interaction.guild.members.fetch(
+        interaction.client.user.id
+      );
+      const botColor = botMember.roles.highest.color || embedBotColor;
+
       // Create the embed with the list of commands
       const embed = new EmbedBuilder()
         .setTitle(`Slash Commands [${commands.length}]`)
         .setDescription("Here is a list of all available slash commands.")
         .addFields(commands)
+        .setColor(botColor)
         .setFooter({
           text: `Requested by ${interaction.user.displayName}`,
           iconURL: interaction.user.displayAvatarURL({ dynamic: true }),

@@ -2,7 +2,6 @@ const {
   ContextMenuCommandBuilder,
   ApplicationCommandType,
   EmbedBuilder,
-  PermissionsBitField,
 } = require("discord.js");
 const { embedBotColor } = require("../../config");
 
@@ -16,14 +15,18 @@ module.exports = {
       const user = interaction.targetUser;
       const member = await interaction.guild.members.fetch(user.id);
 
+      // Fetch roles sorted by position (highest to lowest)
       const roles =
         member.roles.cache
           .filter((role) => role.id !== interaction.guild.id) // Remove @everyone role
+          .sort((a, b) => b.position - a.position)
           .map((role) => role.name)
           .join(", ") || "No roles";
 
-      const highestRole = member.roles.highest;
-      const highestRoleColor = highestRole.color || embedBotColor; // Default to white if no color is set
+      const botMember = await interaction.guild.members.fetch(
+        interaction.client.user.id
+      );
+      const botColor = botMember.roles.highest.color || embedBotColor;
 
       const isBoosting = member.premiumSince ? "Yes" : "No";
       const joinDate = member.joinedAt
@@ -33,7 +36,6 @@ module.exports = {
         ? formatDate(user.createdAt)
         : "Unknown";
 
-      const permissions = new PermissionsBitField(member.permissions.bitfield);
       let globalPermissions = "Standard User";
 
       // Check specific roles for special permissions
@@ -59,9 +61,10 @@ module.exports = {
           : `\`\`\`${roles}\`\`\``;
 
       const embed = new EmbedBuilder()
-        .setTitle(`${member.displayName}'s Information`)
+        .setTitle(`${user.displayName}'s Information`)
+        // .setTitle(`${member.user}'s Information`)
         .setThumbnail(user.displayAvatarURL({ dynamic: true, size: 4096 }))
-        .setColor(highestRoleColor)
+        .setColor(botColor)
         .addFields(
           {
             name: "Username",
@@ -100,7 +103,7 @@ module.exports = {
           }
         )
         .setFooter({
-          text: `Requested by ${interaction.user.displayName}`,
+          text: `Requested by ${interaction.user.username}`,
           iconURL: interaction.user.displayAvatarURL({ dynamic: true }),
         })
         .setTimestamp();

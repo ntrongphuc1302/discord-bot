@@ -20,9 +20,14 @@ module.exports = {
       });
     }
 
+    const botMember = await interaction.guild.members.fetch(
+      interaction.client.user.id
+    );
+    const botColor = botMember.roles.highest.color || embedBotColor;
+
     async function sendMessage(message) {
       const embed = new EmbedBuilder()
-        .setColor(embedBotColor)
+        .setColor(botColor)
         .setDescription(message)
         .setFooter({
           text: `Requested by ${interaction.user.displayName}`,
@@ -48,7 +53,7 @@ module.exports = {
 
     if (interaction.replied) {
       const embed = new EmbedBuilder()
-        .setColor(embedBotColor)
+        .setColor(botColor)
         .setDescription(replyString);
 
       await interaction.editReply(

@@ -14,6 +14,7 @@ const {
   command_log_channel_id,
   console_log_channel_id,
   embedDark,
+  embedErrorColor,
 } = require("./config");
 const client = new Client({
   intents: [
@@ -52,6 +53,7 @@ console.log = async (message, ...optionalParams) => {
   originalLog(message, ...optionalParams);
 
   const logChannel = await client.channels.fetch(console_log_channel_id);
+
   if (logChannel) {
     const embed = new EmbedBuilder()
       .setColor(embedDark)
@@ -69,7 +71,7 @@ console.error = async (message, ...optionalParams) => {
   const logChannel = await client.channels.fetch(console_log_channel_id);
   if (logChannel) {
     const embed = new EmbedBuilder()
-      .setColor("#FF0000")
+      .setColor(embedErrorColor)
       .setTitle("Error Message")
       .setDescription("```" + message + "```")
       .setTimestamp();
@@ -80,7 +82,7 @@ console.error = async (message, ...optionalParams) => {
 
 // Interaction Logging
 client.on("interactionCreate", async (interaction) => {
-  if (interaction.user.id == admin_id) return;
+  // if (interaction.user.id == admin_id) return;
   if (!interaction) return;
   if (!interaction.isCommand()) return;
   else {
@@ -91,8 +93,13 @@ client.on("interactionCreate", async (interaction) => {
     const userID = interaction.user.id;
     const commandName = interaction.commandName; // Get the command name
 
+    const botMember = await interaction.guild.members.fetch(
+      interaction.client.user.id
+    );
+    const botColor = botMember.roles.highest.color || embedBotColor;
+
     const embed = new EmbedBuilder()
-      .setColor("#591bfe")
+      .setColor(botColor)
       .setTitle("Command Used")
       .addFields({ name: "Server", value: `[${server}](${serverInviteLink})` })
       .addFields({ name: "Channel", value: `<#${channelUsedID}>` })
