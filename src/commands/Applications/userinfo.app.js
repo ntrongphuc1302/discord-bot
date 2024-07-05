@@ -61,8 +61,7 @@ module.exports = {
           : `\`\`\`${roles}\`\`\``;
 
       const embed = new EmbedBuilder()
-        .setTitle(`${user.displayName}'s Information`)
-        // .setTitle(`${member.user}'s Information`)
+        .setTitle(`${member.displayName}'s Information`)
         .setThumbnail(user.displayAvatarURL({ dynamic: true, size: 4096 }))
         .setColor(botColor)
         .addFields(
