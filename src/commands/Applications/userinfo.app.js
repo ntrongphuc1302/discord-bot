@@ -4,6 +4,7 @@ const {
   EmbedBuilder,
   PermissionsBitField,
 } = require("discord.js");
+const { embedBotColor } = require("../../config");
 
 module.exports = {
   data: new ContextMenuCommandBuilder()
@@ -22,7 +23,7 @@ module.exports = {
           .join(", ") || "No roles";
 
       const highestRole = member.roles.highest;
-      const highestRoleColor = highestRole.color || "#FFFFFF"; // Default to white if no color is set
+      const highestRoleColor = highestRole.color || embedBotColor; // Default to white if no color is set
 
       const isBoosting = member.premiumSince ? "Yes" : "No";
       const joinDate = member.joinedAt

@@ -4,7 +4,12 @@ const {
   EmbedBuilder,
 } = require("discord.js");
 const { exec } = require("child_process");
-const { embedBotColor, embedErrorColor, admin_id } = require("../../config");
+const {
+  embedBotColor,
+  embedErrorColor,
+  admin_id,
+  embedDark,
+} = require("../../config");
 
 module.exports = {
   data: {
@@ -100,7 +105,7 @@ module.exports = {
           .setTitle("Git Command Execution")
           .addFields({ name: "Command", value: `\`\`\`${gitCommand}\`\`\`` })
           .addFields({ name: "Output", value: `\`\`\`${output}\`\`\`` })
-          .setColor(embedBotColor)
+          .setColor(embedDark)
           .setFooter({
             text: `Executed by ${interaction.user.displayName}`,
             iconURL: interaction.user.displayAvatarURL({ dynamic: true }),
