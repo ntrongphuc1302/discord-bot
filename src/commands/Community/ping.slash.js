@@ -8,7 +8,7 @@ module.exports = {
     const ping = client.ws.ping;
     await interaction.reply({
       content: `Pong! ${ping}ms`,
-      //   ephemeral: true,
+      ephemeral: true,
     });
   },
 };
