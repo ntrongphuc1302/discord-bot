@@ -19,14 +19,22 @@ module.exports = {
     );
     const botColor = botMember.roles.highest.color;
 
-    const sendMessage = async (message, send) => {
+    const sendMessage = async (message, send, avatarUrl = null) => {
       const embed = new EmbedBuilder()
         .setColor(botColor)
-        .setDescription(message);
+        .setDescription(message)
+        .setFooter({
+          text: `Check by ${interaction.user.displayName}`,
+          iconURL: interaction.user.displayAvatarURL({ dynamic: true }),
+        })
+        .setTimestamp();
+
+      if (avatarUrl) {
+        embed.setThumbnail(avatarUrl);
+      }
 
       if (send) {
         await interaction.editReply({
-          //   content: `discord.gg/${vanity}`,
           embeds: [embed],
         });
       } else {
@@ -47,7 +55,9 @@ module.exports = {
         await sendMessage(`The vanity invite \`${vanity}\` is **available**!`);
       } else {
         await sendMessage(
-          `The vanity invite \`${vanity}\` is **taken** by: discord.gg/${vanity} \n\n**${
+          `The vanity invite \`${vanity}\` is **taken** by: [${
+            invite.guild.name
+          }](https://discord.gg/${vanity}) \n\n**${
             invite.guild.name
           }'s Server Features: ** \n > Member Count: \`${
             invite.memberCount
@@ -56,7 +66,8 @@ module.exports = {
           }\` \n> Server Description: \`${
             invite.guild.description ?? "None"
           }\` \n\n This server holds the invite \`${vanity}\` meaning it is **not** available.`,
-          true
+          true,
+          invite.guild.iconURL() // Pass the server avatar URL
         );
       }
     } catch (err) {
