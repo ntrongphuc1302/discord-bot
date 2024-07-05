@@ -55,8 +55,11 @@ console.log = async (message, ...optionalParams) => {
   const logChannel = await client.channels.fetch(console_log_channel_id);
 
   if (logChannel) {
+    const botMember = await logChannel.guild.members.fetch(client.user.id);
+    const botColor = botMember.roles.highest.color || embedDark;
+
     const embed = new EmbedBuilder()
-      .setColor(embedDark)
+      .setColor(botColor)
       .setTitle("Log Message")
       .setDescription("```" + message + "```")
       .setTimestamp();
