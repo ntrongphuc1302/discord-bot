@@ -1,7 +1,6 @@
-const { SlashCommandBuilder } = require("@discordjs/builders");
+const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
 const fetch = require("node-fetch").default;
-
-const ownerId = process.env.discord_bot_owner_id;
+const { embedBotColor, owner_id } = require("../../config");
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -15,7 +14,7 @@ module.exports = {
     ),
   async execute(interaction, client) {
     // Check if the user is the bot owner
-    if (interaction.user.id !== ownerId) {
+    if (interaction.user.id !== owner_id) {
       return interaction.reply({
         content: "You do not have permission to use this command.",
         ephemeral: true,
@@ -41,7 +40,7 @@ module.exports = {
     }
 
     // Defer the reply to prevent the interaction from timing out
-    await interaction.deferReply({ ephemeral: true });
+    await interaction.deferReply();
 
     // Fetch the avatar to ensure it's a valid image
     try {
@@ -51,9 +50,24 @@ module.exports = {
       // Change the bot's avatar
       await client.user.setAvatar(buffer);
 
-      // Edit the deferred reply with a confirmation message
+      // Create an embed to show the new avatar
+      const embed = new EmbedBuilder()
+        .setTitle("Bot Avatar Changed Successfully")
+        .setDescription(
+          `Bot avatar changed successfully to: [Avatar URL](${avatarUrl})`
+        )
+        .setImage(avatarUrl)
+        .setColor(embedBotColor) // Green color for success
+        .setFooter({
+          text: `Changed by ${interaction.user.displayName}`,
+          iconURL: interaction.user.displayAvatarURL({ dynamic: true }),
+        })
+        .setTimestamp();
+
+      // Edit the deferred reply with a confirmation message and embed
       await interaction.editReply({
-        content: `Bot avatar changed successfully to: ${avatarUrl}`,
+        content: null,
+        embeds: [embed],
       });
     } catch (error) {
       console.error("Error setting bot avatar:", error);

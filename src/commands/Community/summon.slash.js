@@ -1,6 +1,7 @@
 const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
 const superagent = require("superagent");
 const { summonMessages, dmMessages } = require("../../data/summon.js");
+const { embedBotColor } = require("../../config.js");
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -72,6 +73,10 @@ module.exports = {
       console.error(`Could not send DM to ${user.tag}.`);
     }
 
+    // Fetch the member object for the user who initiated the interaction
+    const member = interaction.guild.members.cache.get(interaction.user.id);
+    const highestRoleColor = member.roles.highest.color || embedBotColor; // Default to red if no role color
+
     // Create summon embed
     const embed = new EmbedBuilder()
       .setAuthor({
@@ -79,7 +84,7 @@ module.exports = {
         iconURL: interaction.user.displayAvatarURL({ dynamic: true }),
       })
       .setDescription(`${summonMessage} ${user}`)
-      .setColor("#ff0000")
+      .setColor(highestRoleColor)
       .setThumbnail(user.displayAvatarURL({ dynamic: true, size: 4096 }))
       .setImage(summonGif)
       .setFooter({

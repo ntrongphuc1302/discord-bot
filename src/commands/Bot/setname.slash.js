@@ -1,6 +1,5 @@
-const { SlashCommandBuilder } = require("@discordjs/builders");
-
-const ownerId = process.env.discord_bot_owner_id; // Replace with your Discord user ID
+const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
+const { embedBotColor, owner_id } = require("../../config");
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -14,7 +13,7 @@ module.exports = {
     ),
   async execute(interaction, client) {
     // Check if the user is the bot owner
-    if (interaction.user.id !== ownerId) {
+    if (interaction.user.id !== owner_id) {
       return interaction.reply({
         content: "You do not have permission to use this command.",
         ephemeral: true,
@@ -27,9 +26,18 @@ module.exports = {
     // Change the bot's name
     try {
       await client.user.setUsername(newName);
+      const embed = new EmbedBuilder()
+        .setTitle("Bot Name Changed")
+        .addFields({ name: "New Name", value: `\`\`\`${newName}\`\`\`` })
+        .setColor(embedBotColor)
+        .setFooter({
+          text: `Changed by ${interaction.user.displayName}`,
+          iconURL: interaction.user.displayAvatarURL({ dynamic: true }),
+        })
+        .setTimestamp();
+
       await interaction.reply({
-        content: `The bot's name has been changed to ${newName}.`,
-        ephemeral: true,
+        embeds: [embed],
       });
     } catch (error) {
       console.error("Error changing bot name:", error);

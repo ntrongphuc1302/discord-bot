@@ -1,4 +1,5 @@
 const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
+const { embedBotColor, admin_id } = require("../../config");
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -12,7 +13,7 @@ module.exports = {
     ),
   async execute(interaction) {
     //Permission check
-    if (interaction.member.id !== process.env.discord_bot_owner_id) {
+    if (interaction.member.id !== admin_id) {
       return await interaction.reply({
         content: "You do not have permission to use this command.",
         ephemeral: true,
@@ -21,7 +22,7 @@ module.exports = {
 
     async function sendMessage(message) {
       const embed = new EmbedBuilder()
-        .setColor("#591bfe")
+        .setColor(embedBotColor)
         .setDescription(message)
         .setFooter({
           text: `Requested by ${interaction.user.displayName}`,
@@ -47,7 +48,7 @@ module.exports = {
 
     if (interaction.replied) {
       const embed = new EmbedBuilder()
-        .setColor("#591bfe")
+        .setColor(embedBotColor)
         .setDescription(replyString);
 
       await interaction.editReply(

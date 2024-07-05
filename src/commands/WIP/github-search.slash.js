@@ -6,6 +6,7 @@ const {
   ButtonStyle,
 } = require("discord.js");
 const puppeteer = require("puppeteer");
+const { embedBotColor } = require("../../config");
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -79,7 +80,7 @@ module.exports = {
     );
 
     const embed = new EmbedBuilder()
-      .setColor("#591bfe")
+      .setColor(embedBotColor)
       .setTitle(`GitHub Repository Matching: \`${query}\``)
       .setDescription(format.join("\n"))
       .setFooter({

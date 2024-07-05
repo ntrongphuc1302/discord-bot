@@ -4,6 +4,7 @@ const {
   EmbedBuilder,
 } = require("discord.js");
 const { exec } = require("child_process");
+const { embedErrorColor, embedDark, admin_id } = require("../../config");
 
 module.exports = {
   data: {
@@ -21,7 +22,7 @@ module.exports = {
 
   async execute(interaction) {
     // Permission check (replace with your bot owner's ID)
-    if (interaction.user.id !== process.env.discord_bot_owner_id) {
+    if (interaction.user.id !== admin_id) {
       return await interaction.reply({
         content: "You do not have permission to use this command.",
         ephemeral: true,
@@ -39,7 +40,7 @@ module.exports = {
           const errEmbed = new EmbedBuilder()
             .setTitle("An error occurred")
             .setDescription("```" + error.message + "```")
-            .setColor("#e32424");
+            .setColor(embedErrorColor);
 
           return interaction.editReply({ embeds: [errEmbed], ephemeral: true });
         }
@@ -49,7 +50,7 @@ module.exports = {
         const resultEmbed = new EmbedBuilder()
           .setTitle("Terminal Command Execution")
           .setDescription("```" + output + "```")
-          .setColor("#591bfe")
+          .setColor(embedDark)
           .setFooter({
             text: `Executed by ${interaction.user.username}`,
             iconURL: interaction.user.displayAvatarURL({ dynamic: true }),
@@ -63,7 +64,7 @@ module.exports = {
       const errEmbed = new EmbedBuilder()
         .setTitle("An error occurred")
         .setDescription("```" + error.message + "```")
-        .setColor("#e32424");
+        .setColor(embedErrorColor);
 
       await interaction.editReply({ embeds: [errEmbed], ephemeral: true });
     }

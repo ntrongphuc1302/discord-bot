@@ -5,6 +5,7 @@ const {
   ButtonStyle,
   ActionRowBuilder,
 } = require("discord.js");
+const { embedBotColor } = require("../../config");
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -24,7 +25,7 @@ module.exports = {
     var msg;
     async function sendMessage(message, button, updated) {
       const embed = new EmbedBuilder()
-        .setColor("#591bfe")
+        .setColor(embedBotColor)
         .setDescription(message)
         .setFooter({
           text: `Requested by ${interaction.user.displayName}`,

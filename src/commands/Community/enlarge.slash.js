@@ -1,4 +1,5 @@
 const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
+const { embedBotColor } = require("../../config");
 const axios = require("axios").default;
 
 module.exports = {
@@ -39,7 +40,7 @@ module.exports = {
     }
 
     const embed = new EmbedBuilder()
-      .setColor("#591bfe")
+      .setColor(embedBotColor)
       .setDescription(`:white_check_mark: Here is the enlarged emoji`)
       .setImage(emoji)
       .setFooter({

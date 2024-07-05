@@ -6,6 +6,7 @@ const {
   ActionRowBuilder,
 } = require("discord.js");
 const models = require("../../data/models.js"); // Assuming models array is correctly exported
+const { embedBotColor, embedErrorColor, admin_id } = require("../../config.js");
 
 module.exports = {
   data: {
@@ -33,7 +34,7 @@ module.exports = {
 
   async execute(interaction) {
     // Permission check
-    if (interaction.member.id !== process.env.discord_bot_owner_id) {
+    if (interaction.member.id !== admin_id) {
       return await interaction.reply({
         content: "You do not have permission to use this command.",
         ephemeral: true,
@@ -66,7 +67,7 @@ module.exports = {
         .setTitle("Image Generated")
         .addFields({ name: "Prompt", value: `\`\`\`${prompt}\`\`\`` })
         .setImage(output[0])
-        .setColor("#591bfe")
+        .setColor(embedBotColor)
         .setFooter({
           text: `Requested by ${interaction.user.displayName}`,
           iconURL: interaction.user.displayAvatarURL({ dynamic: true }),
@@ -81,7 +82,7 @@ module.exports = {
       const errEmbed = new EmbedBuilder()
         .setTitle("An error occurred")
         .setDescription("```" + error + "```")
-        .setColor(0xe32424);
+        .setColor(embedErrorColor);
 
       await interaction.editReply({ embeds: [errEmbed], ephemeral: true });
     }

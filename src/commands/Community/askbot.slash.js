@@ -1,5 +1,6 @@
 const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
 const puppeteer = require("puppeteer");
+const { embedBotColor } = require("../../config");
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -55,7 +56,7 @@ module.exports = {
       value.shift();
 
       const embed = new EmbedBuilder()
-        .setColor("#591bfe")
+        .setColor(embedBotColor)
         .setTitle("Bot Response:")
         // .setDescription(`\`\`\`${value.join("\n\n\n\n")}\`\`\``)
         .setDescription(`${value.join("\n")}`)

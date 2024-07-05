@@ -4,6 +4,7 @@ const {
   AttachmentBuilder,
 } = require("discord.js");
 const puppeteer = require("puppeteer");
+const { embedBotColor } = require("../../config");
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -39,7 +40,7 @@ module.exports = {
 
       const embed = new EmbedBuilder()
         .setImage("attachment://screenshot.png")
-        .setColor("#591bfe")
+        .setColor(embedBotColor)
         .setFooter({
           text: `Requested by ${interaction.user.displayName}`,
           iconURL: interaction.user.displayAvatarURL({ dynamic: true }),

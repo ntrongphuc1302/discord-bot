@@ -1,4 +1,5 @@
 const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
+const { embedBotColor } = require("../../config");
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -28,7 +29,7 @@ module.exports = {
             emojiChunks.length
           })`
         )
-        .setColor("#591bfe")
+        .setColor(embedBotColor)
         .setDescription(
           chunk
             .map(

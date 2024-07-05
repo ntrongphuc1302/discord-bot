@@ -5,6 +5,7 @@ const {
 } = require("discord.js");
 const superagent = require("superagent");
 const { summonMessages, dmMessages } = require("../../data/summon.js");
+const { embedBotColor } = require("../../config.js");
 
 module.exports = {
   data: new ContextMenuCommandBuilder()
@@ -13,6 +14,8 @@ module.exports = {
 
   async execute(interaction) {
     const user = interaction.targetUser;
+    const member = interaction.guild.members.cache.get(interaction.user.id);
+    const highestRoleColor = member.roles.highest.color || embedBotColor; // Default to red if no role color
 
     const summonMessage =
       summonMessages[Math.floor(Math.random() * summonMessages.length)];
@@ -70,7 +73,7 @@ module.exports = {
         iconURL: interaction.user.displayAvatarURL({ dynamic: true }),
       })
       .setDescription(`${summonMessage} ${user}`)
-      .setColor("#ff0000")
+      .setColor(highestRoleColor)
       .setThumbnail(user.displayAvatarURL({ dynamic: true, size: 4096 }))
       .setImage(summonGif)
       .setFooter({

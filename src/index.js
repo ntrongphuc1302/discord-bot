@@ -9,6 +9,7 @@ const {
   Collection,
 } = require(`discord.js`);
 const fs = require("fs");
+const { admin_id, command_log_channel_id } = require("./config");
 const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,
@@ -40,11 +41,11 @@ const commandFolders = fs.readdirSync("./src/commands");
 
 // Interactoin Logging
 client.on("interactionCreate", async (interaction) => {
-  if (interaction.user.id == process.env.discord_bot_owner_id) return;
+  if (interaction.user.id == admin_id) return;
   if (!interaction) return;
   if (!interaction.isCommand()) return;
   else {
-    const channel = await client.channels.cache.get("1258454088790835301"); // Channel ID to log the command
+    const channel = await client.channels.cache.get(command_log_channel_id); // Channel ID to log the command
     const server = interaction.guild.name;
     const serverInviteLink = "http://discord.gg/suyMRyKjrv";
     const channelUsedID = interaction.channel.id;

@@ -1,4 +1,5 @@
 const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
+const { embedBotColor } = require("../../config");
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -63,7 +64,7 @@ module.exports = {
 
     const embed = new EmbedBuilder()
       .setTitle("SERVER INFORMATION")
-      .setColor("#591bfe") // Set embed color to #591bfe
+      .setColor(embedBotColor) // Set embed color to #591bfe
       .setThumbnail(guild.iconURL({ dynamic: true, size: 4096 })) // Server avatar as thumbnail
       .addFields(
         { name: "Server name", value: `\`\`\`${name}\`\`\`` },
