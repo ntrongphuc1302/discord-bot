@@ -55,7 +55,7 @@ console.log = async (message, ...optionalParams) => {
   if (logChannel) {
     const embed = new EmbedBuilder()
       .setColor(embedDark)
-      // .setTitle("Log Message")
+      .setTitle("Log Message")
       .setDescription("```" + message + "```")
       .setTimestamp();
 
