@@ -9,7 +9,12 @@ const {
   Collection,
 } = require(`discord.js`);
 const fs = require("fs");
-const { admin_id, command_log_channel_id } = require("./config");
+const {
+  admin_id,
+  command_log_channel_id,
+  console_log_channel_id,
+  embedDark,
+} = require("./config");
 const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,
@@ -39,7 +44,41 @@ const commandFolders = fs.readdirSync("./src/commands");
   client.login(process.env.discord_bot_token);
 })();
 
-// Interactoin Logging
+// Terminal Logging to Discord channel
+const originalLog = console.log;
+const originalError = console.error;
+
+console.log = async (message, ...optionalParams) => {
+  originalLog(message, ...optionalParams);
+
+  const logChannel = await client.channels.fetch(console_log_channel_id);
+  if (logChannel) {
+    const embed = new EmbedBuilder()
+      .setColor(embedDark)
+      // .setTitle("Log Message")
+      .setDescription("```" + message + "```")
+      .setTimestamp();
+
+    await logChannel.send({ embeds: [embed] });
+  }
+};
+
+console.error = async (message, ...optionalParams) => {
+  originalError(message, ...optionalParams);
+
+  const logChannel = await client.channels.fetch(console_log_channel_id);
+  if (logChannel) {
+    const embed = new EmbedBuilder()
+      .setColor("#FF0000")
+      .setTitle("Error Message")
+      .setDescription("```" + message + "```")
+      .setTimestamp();
+
+    await logChannel.send({ embeds: [embed] });
+  }
+};
+
+// Interaction Logging
 client.on("interactionCreate", async (interaction) => {
   if (interaction.user.id == admin_id) return;
   if (!interaction) return;

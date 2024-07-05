@@ -6,6 +6,7 @@ module.exports = {
   // Channel ID
   command_log_channel_id: "1258454088790835301",
   bug_report_channel_id: "1257953446183829595",
+  console_log_channel_id: "1258496813619478681",
 
   // Embed Colors
   embedDark: "#1e1f22",
