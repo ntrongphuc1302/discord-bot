@@ -1,28 +1,45 @@
+const { ActivityType } = require("discord.js");
+const {
+  playingNames,
+  streamingNames,
+  watchingNames,
+  listeningNames,
+} = require("../data/activities");
+
 module.exports = {
-    name: 'ready',
-    once: true,
-    async execute(client) {
-        console.log('Ready!');
+  name: "ready",
+  once: true,
+  async execute(client) {
+    const activities = [
+      {
+        name: playingNames[Math.floor(Math.random() * playingNames.length)],
+        type: ActivityType.Playing,
+      },
+      {
+        name: streamingNames[Math.floor(Math.random() * streamingNames.length)],
+        type: ActivityType.Streaming,
+        url: "https://youtu.be/dQw4w9WgXcQ",
+      },
+      {
+        name: watchingNames[Math.floor(Math.random() * watchingNames.length)],
+        type: ActivityType.Watching,
+      },
+      {
+        name: listeningNames[Math.floor(Math.random() * listeningNames.length)],
+        type: ActivityType.Listening,
+      },
+    ];
 
-        async function pickPresence () {
-            const option = Math.floor(Math.random() * statusArray.length);
+    const setRandomActivity = () => {
+      const randomActivity =
+        activities[Math.floor(Math.random() * activities.length)];
+      client.user.setActivity(randomActivity);
+    };
 
-            try {
-                await client.user.setPresence({
-                    activities: [
-                        {
-                            name: statusArray[option].content,
-                            type: statusArray[option].type,
+    setRandomActivity();
 
-                        },
-                    
-                    ],
+    setInterval(setRandomActivity, 1000 * 60 * 10);
 
-                    status: statusArray[option].status
-                })
-            } catch (error) {
-                console.error(error);
-            }
-        }
-    },
+    console.log("Ready!");
+  },
 };
