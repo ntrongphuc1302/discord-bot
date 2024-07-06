@@ -57,7 +57,7 @@ module.exports = {
           .setDescription("```" + output + "```")
           .setColor(botColor)
           .setFooter({
-            text: `Executed by ${interaction.user.username}`,
+            text: `Executed by ${interaction.user.displayName}`,
             iconURL: interaction.user.displayAvatarURL({ dynamic: true }),
           })
           .setTimestamp();

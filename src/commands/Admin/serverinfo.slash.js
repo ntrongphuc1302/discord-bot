@@ -7,6 +7,14 @@ module.exports = {
     .setDescription("Get information about the server."),
 
   async execute(interaction) {
+    // Permission check (replace with your bot owner's ID)
+    if (interaction.user.id !== admin_id) {
+      return await interaction.reply({
+        content: "You do not have permission to use this command.",
+        ephemeral: true,
+      });
+    }
+
     const { guild } = interaction;
     const { members } = guild;
     const { name, ownerId, memberCount } = guild;
