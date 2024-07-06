@@ -32,7 +32,7 @@ module.exports = {
         .setTitle("New Bug Report")
         .addFields({
           name: "Reporter",
-          value: `\`${member.user.username} (${id})\``,
+          value: `\`${member.user.displayName} (${id})\``,
         })
         .addFields({
           name: "Reporting Guild",
