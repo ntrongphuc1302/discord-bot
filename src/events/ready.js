@@ -5,6 +5,7 @@ const {
   watchingNames,
   listeningNames,
   competingNames,
+  customNames,
 } = require("../data/activities");
 
 module.exports = {
@@ -32,6 +33,10 @@ module.exports = {
       {
         name: competingNames[Math.floor(Math.random() * competingNames.length)],
         type: ActivityType.Competing,
+      },
+      {
+        type: ActivityType.Custom,
+        name: customNames[Math.floor(Math.random() * customNames.length)],
       },
     ];
 
