@@ -10,7 +10,7 @@ const { embedBotColor } = require("../../config");
 
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName("wip-github-search")
+    .setName("wip-githubsearch")
     .setDescription("Search for a GitHub repository.")
     .addStringOption((option) =>
       option

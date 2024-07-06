@@ -9,7 +9,7 @@ const { embedBotColor } = require("../../config");
 
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName("mcserver-stats")
+    .setName("mcserverstats")
     .setDescription("Get information about a Minecraft server.")
     .addStringOption((option) =>
       option

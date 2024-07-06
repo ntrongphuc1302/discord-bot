@@ -1,9 +1,9 @@
 const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
-const { embedBotColor } = require("../../config");
+const { embedBotColor, member_role_id, bot_role_id } = require("../../config");
 
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName("wip-serverinfo")
+    .setName("serverinfo")
     .setDescription("Get information about the server."),
 
   async execute(interaction) {
@@ -11,9 +11,8 @@ module.exports = {
     const { members } = guild;
     const { name, ownerId, memberCount } = guild;
 
-    // Verifycation level
+    // Verification level
     let baseVerificationLevel = guild.verificationLevel;
-
     if (baseVerificationLevel == 0) baseVerificationLevel = "None";
     if (baseVerificationLevel == 1) baseVerificationLevel = "Low";
     if (baseVerificationLevel == 2) baseVerificationLevel = "Medium";
@@ -62,6 +61,14 @@ module.exports = {
       creationDate += ` (less than a year ago)`;
     }
 
+    // Count members with specific roles
+    const memberRoleCount = members.cache.filter((member) =>
+      member.roles.cache.has(member_role_id)
+    ).size;
+    const botRoleCount = members.cache.filter((member) =>
+      member.roles.cache.has(bot_role_id)
+    ).size;
+
     const botMember = await interaction.guild.members.fetch(
       interaction.client.user.id
     );
@@ -72,40 +79,39 @@ module.exports = {
       .setColor(botColor) // Set embed color to #591bfe
       .setThumbnail(guild.iconURL({ dynamic: true, size: 4096 })) // Server avatar as thumbnail
       .addFields(
-        { name: "Server name", value: `\`\`\`${name}\`\`\`` },
+        { name: "Server Name", value: `\`\`\`${name}\`\`\`` },
         { name: "Server ID", value: `\`\`\`${guild.id}\`\`\`` },
         {
-          name: "Server owner",
+          name: "Server Owner",
           value: `\`\`\`${owner.user.displayName} | ${owner.user.tag}\`\`\``,
         }, // Mention server owner
-        { name: "Server region", value: `\`\`\`Vietnam\`\`\`` },
+        { name: "Server Region", value: `\`\`\`Vietnam\`\`\`` },
         {
-          name: "Server verification level",
-          // value: `\`\`\`${baseVerificationLevel}\`\`\``,
-          value: `\`\`\`Very High\`\`\``,
+          name: "Server Verification level",
+          value: `\`\`\`${baseVerificationLevel}\`\`\``,
         },
         {
-          name: `Server boosts [ ${guild.premiumSubscriptionCount} ]`,
+          name: `Server Boosts [ ${guild.premiumSubscriptionCount} ]`,
           value: `\`\`\`Level: ${guild.premiumTier}\`\`\``,
         },
         {
-          name: `Server members [ ${memberCount} ]`,
-          value: `\`\`\`Members:  | Bots:\`\`\``,
+          name: `Server Members [ ${memberCount} ]`,
+          value: `\`\`\`Members: ${memberRoleCount} | Bots: ${botRoleCount}\`\`\``,
         },
         {
-          name: `Server categories and channels [  ]`,
+          name: `Server Categories And Channels [  ]`,
           value: `\`\`\`Categories:  | Text:  | Voice:  | Announcement:  | Stage: \`\`\``,
         },
         {
-          name: `Server emojis and stickers [ ${emonsticCount} ]`,
+          name: `Server Emojis And Stickers [ ${emonsticCount} ]`,
           value: `\`\`\`Emojis: ${totalEmojis} (Normal: ${normalEmojis}, Animated: ${animatedEmojis}) | Stickers: ${stickers}\`\`\``,
         },
         {
-          name: `Server roles [ ${guild.roles.cache.size - 1} ]`, // Subtract 1 for @everyone role
+          name: `Server Roles [ ${guild.roles.cache.size - 1} ]`, // Subtract 1 for @everyone role
           value: `\`\`\`${roles || "No roles"}\`\`\``,
         },
         {
-          name: "Server created on",
+          name: "Server Created On",
           value: `\`\`\`${creationDate}\`\`\``,
         }
       )

@@ -3,7 +3,12 @@ const {
   ApplicationCommandType,
   EmbedBuilder,
 } = require("discord.js");
-const { embedBotColor } = require("../../config");
+const {
+  embedBotColor,
+  moderator_role_id,
+  bot_role_id,
+  admin_id,
+} = require("../../config");
 
 module.exports = {
   data: new ContextMenuCommandBuilder()
@@ -41,14 +46,14 @@ module.exports = {
       // Check specific roles for special permissions
       if (member.roles.cache.has("1087611688020365352")) {
         globalPermissions = "Queen";
-      } else if (member.roles.cache.has("1087456448872722534")) {
+      } else if (member.roles.cache.has(moderator_role_id)) {
         globalPermissions = "Moderator";
-      } else if (member.roles.cache.has("1087459750758854747")) {
+      } else if (member.roles.cache.has(bot_role_id)) {
         globalPermissions = "Bot";
       }
 
       // Check if the user is the server owner
-      if (user.id === "358614972223193089") {
+      if (user.id === admin_id) {
         globalPermissions = "👑 Server Owner";
       }
 
@@ -75,7 +80,7 @@ module.exports = {
             value: `\`\`\`${user.id}\`\`\``,
           },
           {
-            name: "Global permissions",
+            name: "Global Permissions",
             value: `\`\`\`${globalPermissions}\`\`\``,
           },
           {
@@ -88,16 +93,16 @@ module.exports = {
             inline: true,
           },
           {
-            name: "Is boosting",
+            name: "Is Boosting",
             value: `\`\`\`${isBoosting}\`\`\``,
             inline: true,
           },
           {
-            name: "Joined server on",
+            name: "Joined Server On",
             value: `\`\`\`${joinDate}\`\`\``,
           },
           {
-            name: "Account created on",
+            name: "Account Created On",
             value: `\`\`\`${creationDate}\`\`\``,
           }
         )

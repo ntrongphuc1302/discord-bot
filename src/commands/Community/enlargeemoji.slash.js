@@ -4,7 +4,7 @@ const axios = require("axios").default;
 
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName("enlarge")
+    .setName("enlargeemoji")
     .setDescription("Enlarge an emoji")
     .addStringOption((option) =>
       option
