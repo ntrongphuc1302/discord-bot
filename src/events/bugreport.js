@@ -5,7 +5,7 @@ const {
   ButtonBuilder,
   ButtonStyle,
 } = require("discord.js");
-const { embedBugColor, bug_report_channel_id } = require("../config");
+const { bug_report_channel_id } = require("../config");
 
 module.exports = {
   name: Events.InteractionCreate,
@@ -22,8 +22,13 @@ module.exports = {
 
       const channel = server.channels.cache.get(bug_report_channel_id);
 
+      const botMember = await interaction.guild.members.fetch(
+        interaction.client.user.id
+      );
+      const botColor = botMember.roles.highest.color;
+
       const embed = new EmbedBuilder()
-        .setColor(embedBugColor)
+        .setColor(botColor)
         .setTitle("New Bug Report")
         .addFields({
           name: "Reporter",
