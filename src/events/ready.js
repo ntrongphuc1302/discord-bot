@@ -4,6 +4,7 @@ const {
   streamingNames,
   watchingNames,
   listeningNames,
+  competingNames,
 } = require("../data/activities");
 
 module.exports = {
@@ -27,6 +28,10 @@ module.exports = {
       {
         name: listeningNames[Math.floor(Math.random() * listeningNames.length)],
         type: ActivityType.Listening,
+      },
+      {
+        name: competingNames[Math.floor(Math.random() * competingNames.length)],
+        type: ActivityType.Competing,
       },
     ];
 
