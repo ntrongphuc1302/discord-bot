@@ -43,7 +43,7 @@ module.exports = {
 
     setRandomActivity();
 
-    setInterval(setRandomActivity, 1000 * 60 * 10);
+    setInterval(setRandomActivity, 1000 * 60 * 60);
 
     console.log("Ready!");
   },
