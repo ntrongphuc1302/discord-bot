@@ -4,12 +4,7 @@ const {
   EmbedBuilder,
 } = require("discord.js");
 const { exec } = require("child_process");
-const {
-  embedBotColor,
-  embedErrorColor,
-  admin_id,
-  embedDark,
-} = require("../../config");
+const { embedErrorColor, admin_id, embedDark } = require("../../config");
 
 module.exports = {
   data: {

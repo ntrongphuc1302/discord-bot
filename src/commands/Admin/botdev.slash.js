@@ -1,12 +1,12 @@
 const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
-const { owner_id, embedBotColor } = require("../../config");
+const { admin_id, embedBotColor } = require("../../config");
 
 module.exports = {
   data: new SlashCommandBuilder()
     .setName("botdev")
     .setDescription("Bot Developer Commands"),
   async execute(interaction) {
-    if (interaction.user.id !== owner_id) {
+    if (interaction.user.id !== admin_id) {
       return await interaction.reply({
         content: "You do not have permission to use this command.",
         ephemeral: true,

@@ -1,5 +1,5 @@
 const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
-const { embedBotColor } = require("../../config");
+const { embedBotColor, admin_id } = require("../../config");
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -25,6 +25,7 @@ module.exports = {
 
     // Get the role option
     const role = options.getRole("role");
+    const icon = role.iconURL();
 
     if (!role) {
       await interaction.reply({
@@ -67,6 +68,7 @@ module.exports = {
     // Build the role information embed
     const roleEmbed = new EmbedBuilder()
       .setTitle(`ROLE INFORMATION`)
+      .setThumbnail(icon)
       .setColor(botColor || embedBotColor)
       .addFields(
         {
