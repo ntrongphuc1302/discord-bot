@@ -14,17 +14,13 @@ module.exports = {
       const user = interaction.targetUser;
       const avatarUrl = user.displayAvatarURL({ format: "png", size: 4096 });
 
-      // Fetch member from guild to get role information
-      const guild = interaction.guild;
-      const member = await guild.members.fetch(user.id);
-
       const botMember = await interaction.guild.members.fetch(
         interaction.client.user.id
       );
       const botColor = botMember.roles.highest.color || embedBotColor;
 
       const embed = new EmbedBuilder()
-        .setTitle(`${user.username}'s Avatar`)
+        .setTitle(`${user.displayName}'s Avatar`)
         .setImage(avatarUrl)
         .setColor(botColor)
         .setFooter({
@@ -38,8 +34,6 @@ module.exports = {
 
       await interaction.reply({
         embeds: [embed],
-        // Uncomment the following line if you want the reply to be ephemeral
-        // ephemeral: true,
       });
     } catch (error) {
       console.error("Error executing context menu command:", error);

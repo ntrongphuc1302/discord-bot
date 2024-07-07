@@ -12,17 +12,13 @@ module.exports = {
     const user = interaction.options.getUser("user") || client.user;
     const avatarUrl = user.displayAvatarURL({ format: "png", size: 4096 });
 
-    // Fetch member from guild to get role information
-    const guild = interaction.guild;
-    const member = await guild.members.fetch(user.id);
-
     const botMember = await interaction.guild.members.fetch(
       interaction.client.user.id
     );
     const botColor = botMember.roles.highest.color || embedBotColor;
 
     const embed = new EmbedBuilder()
-      .setTitle(`${user.username}'s Avatar`)
+      .setTitle(`${user.displayName}'s Avatar`)
       .setImage(avatarUrl)
       .setColor(botColor)
       .setFooter({
@@ -33,7 +29,6 @@ module.exports = {
 
     await interaction.reply({
       embeds: [embed],
-      //   ephemeral: true,
     });
   },
 };

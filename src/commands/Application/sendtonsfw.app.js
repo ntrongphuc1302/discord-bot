@@ -22,15 +22,14 @@ module.exports = {
     try {
       let member = message.member;
       if (!member) {
-        member = await interaction.guild.members.fetch(message.author.id); // Fetch member if not available
+        member = await interaction.guild.members.fetch(message.author.id);
       }
 
       const webhookClient = await channel.createWebhook({
-        name: member.displayName, // Use display name of the member
-        avatar: message.author.displayAvatarURL({ dynamic: true }), // Use author's avatar
+        name: member.displayName,
+        avatar: message.author.displayAvatarURL({ dynamic: true }),
       });
 
-      // Send message content or file attachments via webhook
       await webhookClient.send({
         content: message.content,
         username: member.displayName,
@@ -44,7 +43,7 @@ module.exports = {
         ephemeral: true,
       });
 
-      await webhookClient.delete(); // Cleanup: Delete the webhook after use
+      await webhookClient.delete();
     } catch (error) {
       console.error("Error sending message to NSFW:", error);
       await interaction.reply({
