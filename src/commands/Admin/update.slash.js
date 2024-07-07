@@ -27,6 +27,7 @@ module.exports = {
       // Array of commands to execute sequentially
       const commands = [
         "git pull origin main",
+        "npm i",
         "npm i pm2 -g",
         "pm2 restart 0",
       ];
