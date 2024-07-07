@@ -11,16 +11,16 @@ module.exports = {
     try {
       await interaction.deferReply();
 
-      // Get all files in the Community folder
-      const communityFolderPath = path.join(__dirname, "..", "Game");
+      // Get all files in the Game folder
+      const gameFolderPath = path.join(__dirname, "..", "Game");
       const commandFiles = fs
-        .readdirSync(communityFolderPath)
+        .readdirSync(gameFolderPath)
         .filter((file) => file.endsWith(".js"));
 
       // Filter valid command objects
       const commands = commandFiles
         .map((file) => {
-          const commandPath = path.join(communityFolderPath, file);
+          const commandPath = path.join(gameFolderPath, file);
           const command = require(commandPath);
 
           if (command && command.data && command.data.name) {
