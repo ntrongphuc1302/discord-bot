@@ -13,21 +13,20 @@ module.exports = {
     ),
 
   async execute(interaction) {
-    const botMember = await interaction.guild.members.fetch(
-      interaction.client.user.id
-    );
-    const botColor = botMember.roles.highest.color;
-
-    const { options } = interaction;
+    const { options, guild, client, member } = interaction;
     const opponent = options.getUser("opponent");
+
+    const botMember = await guild.members.fetch(client.user.id);
+    const botColor = botMember.roles.highest.hexColor || "#5865F2";
+    const displayName = member.displayName;
 
     const Game = new RockPaperScissors({
       message: interaction,
       isSlashGame: true,
       opponent: opponent,
       embed: {
-        title: "Rock Paper Scissors",
-        color: "#5865F2",
+        title: `${displayName}'s Rock Paper Scissors`,
+        color: botColor,
         description: "Press the button below to choose your move!",
       },
       buttons: {
@@ -43,7 +42,7 @@ module.exports = {
       mentionUser: true,
       timeoutTime: 60000,
       buttonStyle: "PRIMARY",
-      pickMessage: "You choose {emoji}",
+      pickMessage: "{player}, you choose {emoji}",
       winMessage: "GG, **{player}** won the game!",
       tieMessage: "It's a tie!",
       timeoutMessage: "The game went unfinished! No one won.",
