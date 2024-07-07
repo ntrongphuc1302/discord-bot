@@ -33,6 +33,10 @@ module.exports = {
             name: "reset",
             value: "reset",
           },
+          {
+            name: "pull",
+            value: "pull",
+          },
         ],
       },
       {
@@ -75,6 +79,9 @@ module.exports = {
           break;
         case "reset":
           gitCommand = "git reset --hard";
+          break;
+        case "pull":
+          gitCommand = "git pull origin main";
           break;
         default:
           return await interaction.editReply({
