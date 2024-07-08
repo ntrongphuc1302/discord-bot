@@ -9,18 +9,6 @@ module.exports = {
   async execute(interaction) {
     const { guild, client, member } = interaction;
 
-    // Send a DM to the user who initiated the game
-    try {
-      await member.send("You have started a Find Emoji game!");
-    } catch (error) {
-      console.error(`Could not send DM to ${member.user.tag}:`, error);
-      await interaction.reply({
-        content: `Could not send DM to ${member.user.tag}. You might have DMs disabled.`,
-        ephemeral: true,
-      });
-      return;
-    }
-
     const botMember = await guild.members.fetch(client.user.id);
     const botColor = botMember.roles.highest.hexColor || "#5865F2";
     const displayName = member.displayName;

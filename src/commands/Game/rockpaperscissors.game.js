@@ -42,7 +42,7 @@ module.exports = {
       mentionUser: true,
       timeoutTime: 60000,
       buttonStyle: "PRIMARY",
-      pickMessage: "{player}, you choose {emoji}",
+      pickMessage: "You choose {emoji}",
       winMessage: "GG, **{player}** won the game!",
       tieMessage: "It's a tie!",
       timeoutMessage: "The game went unfinished! No one won.",
