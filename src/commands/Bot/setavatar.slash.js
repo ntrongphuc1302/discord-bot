@@ -1,8 +1,8 @@
 const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
 const fetch = require("node-fetch").default;
-const { embedBotColor, owner_id } = require("../../config");
 
 module.exports = {
+  admin: true,
   data: new SlashCommandBuilder()
     .setName("setavatar")
     .setDescription("Set the bot's avatar.")
@@ -13,14 +13,6 @@ module.exports = {
       option.setName("file").setDescription("The file for the new avatar")
     ),
   async execute(interaction, client) {
-    // Check if the user is the bot owner
-    if (interaction.user.id !== owner_id) {
-      return interaction.reply({
-        content: "You do not have permission to use this command.",
-        ephemeral: true,
-      });
-    }
-
     // Get the URL and file options
     const url = interaction.options.getString("url");
     const file = interaction.options.getAttachment("file");
@@ -53,7 +45,7 @@ module.exports = {
       const botMember = await interaction.guild.members.fetch(
         interaction.client.user.id
       );
-      const botColor = botMember.roles.highest.color || embedBotColor;
+      const botColor = botMember.roles.highest.color;
 
       // Create an embed to show the new avatar
       const embed = new EmbedBuilder()

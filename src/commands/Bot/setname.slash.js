@@ -1,7 +1,7 @@
 const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
-const { embedBotColor, owner_id } = require("../../config");
 
 module.exports = {
+  admin: true,
   data: new SlashCommandBuilder()
     .setName("setname")
     .setDescription("Set the bot's name.")
@@ -12,14 +12,6 @@ module.exports = {
         .setRequired(true)
     ),
   async execute(interaction, client) {
-    // Check if the user is the bot owner
-    if (interaction.user.id !== owner_id) {
-      return interaction.reply({
-        content: "You do not have permission to use this command.",
-        ephemeral: true,
-      });
-    }
-
     // Get the new name from the command options
     const newName = interaction.options.getString("name");
 

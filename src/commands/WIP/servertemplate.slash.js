@@ -10,6 +10,7 @@ const {
 const axios = require("axios");
 
 module.exports = {
+  admin: true,
   data: new SlashCommandBuilder()
     .setName("wip-admin-servertemplate")
     .setDescription("Get the template of the server.")

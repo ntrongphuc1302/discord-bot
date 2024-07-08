@@ -1,5 +1,6 @@
-const { Interaction } = require("discord.js");
+// const { Interaction } = require("discord.js");
 const modrole = require("../Schemas/modrole");
+const { admin_id } = require("../config");
 
 module.exports = {
   name: "interactionCreate",
@@ -30,6 +31,16 @@ module.exports = {
 
     if (!command) return;
 
+    // Admin
+    if (command.admin) {
+      if (interaction.user.id !== admin_id) {
+        return await interaction.reply({
+          content: `Only **Admin** can use this command.`,
+          ephemeral: true,
+        });
+      }
+    }
+
     // Mod Role
     if (command.mod) {
       var modRoleData = await modrole.find({ Guild: interaction.guild.id });
@@ -39,7 +50,7 @@ module.exports = {
           const mRoles = await interaction.member.roles.cache.map(
             (role) => role.id
           );
-          await mRoles.forEach(async (value) => {
+          await mRoles.forEach(async (role) => {
             if (role == value.Role) check = true;
           });
         });

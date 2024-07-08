@@ -1,25 +1,13 @@
 const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
-const {
-  embedBotColor,
-  member_role_id,
-  bot_role_id,
-  admin_id,
-} = require("../../config");
+const { member_role_id, bot_role_id, admin_id } = require("../../config");
 
 module.exports = {
+  admin: true,
   data: new SlashCommandBuilder()
     .setName("serverinfo")
     .setDescription("Get information about the server."),
 
   async execute(interaction) {
-    // Permission check (replace with your bot owner's ID)
-    if (interaction.user.id !== admin_id) {
-      return await interaction.reply({
-        content: "You do not have permission to use this command.",
-        ephemeral: true,
-      });
-    }
-
     const { guild } = interaction;
     const { members } = guild;
     const { name, ownerId, memberCount } = guild;
@@ -85,7 +73,7 @@ module.exports = {
     const botMember = await interaction.guild.members.fetch(
       interaction.client.user.id
     );
-    const botColor = botMember.roles.highest.color || embedBotColor;
+    const botColor = botMember.roles.highest.color;
 
     const embed = new EmbedBuilder()
       .setTitle("SERVER INFORMATION")

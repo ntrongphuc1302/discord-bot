@@ -6,9 +6,10 @@ const {
   ActionRowBuilder,
 } = require("discord.js");
 const models = require("../../data/models.js"); // Assuming models array is correctly exported
-const { embedBotColor, embedErrorColor, admin_id } = require("../../config.js");
+const { embedErrorColor } = require("../../config.js");
 
 module.exports = {
+  admin: true,
   data: {
     name: "imagine",
     description: "Generate an image using a prompt.",
@@ -33,14 +34,6 @@ module.exports = {
   },
 
   async execute(interaction) {
-    // Permission check
-    if (interaction.member.id !== admin_id) {
-      return await interaction.reply({
-        content: "You do not have permission to use this command.",
-        ephemeral: true,
-      });
-    }
-
     try {
       await interaction.deferReply();
 
@@ -53,7 +46,7 @@ module.exports = {
       const botMember = await interaction.guild.members.fetch(
         interaction.client.user.id
       );
-      const botColor = botMember.roles.highest.color || embedBotColor;
+      const botColor = botMember.roles.highest.color;
 
       const prompt = interaction.options.getString("prompt");
       const model = interaction.options.getString("model") || models[0].value;

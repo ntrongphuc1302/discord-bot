@@ -1,7 +1,7 @@
 const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
-const { embedBotColor, admin_id } = require("../../config");
 
 module.exports = {
+  admin: true,
   data: new SlashCommandBuilder()
     .setName("roleinfo")
     .setDescription("Get information about a specific role.")
@@ -13,14 +13,6 @@ module.exports = {
     ),
 
   async execute(interaction) {
-    // Permission check (replace with your bot owner's ID)
-    if (interaction.user.id !== admin_id) {
-      return await interaction.reply({
-        content: "You do not have permission to use this command.",
-        ephemeral: true,
-      });
-    }
-
     const { guild, options } = interaction;
 
     // Get the role option
@@ -49,7 +41,7 @@ module.exports = {
     const botMember = await interaction.guild.members.fetch(
       interaction.client.user.id
     );
-    const botColor = botMember.roles.highest.color || embedBotColor;
+    const botColor = botMember.roles.highest.color;
 
     // Format the role creation date
     const createdAt = role.createdAt;

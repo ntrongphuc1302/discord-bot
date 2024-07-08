@@ -5,7 +5,6 @@ const {
 } = require("discord.js");
 const superagent = require("superagent");
 const { summonMessages, dmMessages } = require("../../data/summon.js");
-const { embedBotColor } = require("../../config.js");
 
 module.exports = {
   data: new ContextMenuCommandBuilder()
@@ -18,7 +17,7 @@ module.exports = {
     const botMember = await interaction.guild.members.fetch(
       interaction.client.user.id
     );
-    const botColor = botMember.roles.highest.color || embedBotColor;
+    const botColor = botMember.roles.highest.color;
 
     const summonMessage =
       summonMessages[Math.floor(Math.random() * summonMessages.length)];

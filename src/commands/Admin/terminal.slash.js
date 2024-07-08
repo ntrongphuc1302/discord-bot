@@ -1,12 +1,9 @@
-const {
-  Client,
-  ApplicationCommandOptionType,
-  EmbedBuilder,
-} = require("discord.js");
+const { ApplicationCommandOptionType, EmbedBuilder } = require("discord.js");
 const { exec } = require("child_process");
-const { embedErrorColor, admin_id } = require("../../config");
+const { embedErrorColor } = require("../../config");
 
 module.exports = {
+  admin: true,
   data: {
     name: "terminal",
     description: "Execute terminal commands",
@@ -21,14 +18,6 @@ module.exports = {
   },
 
   async execute(interaction) {
-    // Permission check (replace with your bot owner's ID)
-    if (interaction.user.id !== admin_id) {
-      return await interaction.reply({
-        content: "You do not have permission to use this command.",
-        ephemeral: true,
-      });
-    }
-
     const botMember = await interaction.guild.members.fetch(
       interaction.client.user.id
     );

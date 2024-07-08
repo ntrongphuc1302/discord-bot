@@ -3,12 +3,7 @@ const {
   ApplicationCommandType,
   EmbedBuilder,
 } = require("discord.js");
-const {
-  embedBotColor,
-  moderator_role_id,
-  bot_role_id,
-  admin_id,
-} = require("../../config");
+const { moderator_role_id, bot_role_id, admin_id } = require("../../config");
 
 module.exports = {
   data: new ContextMenuCommandBuilder()
@@ -31,7 +26,7 @@ module.exports = {
       const botMember = await interaction.guild.members.fetch(
         interaction.client.user.id
       );
-      const botColor = botMember.roles.highest.color || embedBotColor;
+      const botColor = botMember.roles.highest.color;
 
       const isBoosting = member.premiumSince ? "Yes" : "No";
       const joinDate = member.joinedAt

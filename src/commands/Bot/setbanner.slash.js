@@ -1,8 +1,8 @@
 const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
 const fetch = require("node-fetch").default;
-const { embedBotColor, owner_id } = require("../../config");
 
 module.exports = {
+  admin: true,
   data: new SlashCommandBuilder()
     .setName("setbanner")
     .setDescription("Set the bot's banner.")
@@ -13,14 +13,6 @@ module.exports = {
       option.setName("file").setDescription("The file for the new banner")
     ),
   async execute(interaction, client) {
-    // Check if the user is the bot owner
-    if (interaction.user.id !== owner_id) {
-      return interaction.reply({
-        content: "You do not have permission to use this command.",
-        ephemeral: true,
-      });
-    }
-
     // Get the URL and file options
     const url = interaction.options.getString("url");
     const file = interaction.options.getAttachment("file");

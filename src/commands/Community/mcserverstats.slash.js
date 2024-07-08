@@ -5,7 +5,6 @@ const {
   ButtonStyle,
   ActionRowBuilder,
 } = require("discord.js");
-const { embedBotColor } = require("../../config");
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -27,7 +26,7 @@ module.exports = {
       const botMember = await interaction.guild.members.fetch(
         interaction.client.user.id
       );
-      const botColor = botMember.roles.highest.color || embedBotColor;
+      const botColor = botMember.roles.highest.color;
 
       const embed = new EmbedBuilder()
         .setColor(botColor)

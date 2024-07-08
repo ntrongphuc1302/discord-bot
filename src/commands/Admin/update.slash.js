@@ -1,26 +1,15 @@
-const {
-  Client,
-  ApplicationCommandOptionType,
-  EmbedBuilder,
-} = require("discord.js");
+const { EmbedBuilder } = require("discord.js");
 const { exec } = require("child_process");
-const { embedErrorColor, admin_id, embedDark } = require("../../config");
+const { embedErrorColor, embedDark } = require("../../config");
 
 module.exports = {
+  admin: true,
   data: {
     name: "update",
     description: "Update the bot's codebase and restart",
   },
 
   async execute(interaction) {
-    // Permission check (replace with your bot owner's ID)
-    if (interaction.user.id !== admin_id) {
-      return await interaction.reply({
-        content: "You do not have permission to use this command.",
-        ephemeral: true,
-      });
-    }
-
     try {
       await interaction.deferReply();
 

@@ -1,7 +1,7 @@
 const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
-const { embedBotColor, admin_id } = require("../../config");
 
 module.exports = {
+  mod: true,
   data: new SlashCommandBuilder()
     .setName("eval")
     .setDescription("Evaluate javascript code")
@@ -12,18 +12,10 @@ module.exports = {
         .setRequired(true)
     ),
   async execute(interaction) {
-    //Permission check
-    if (interaction.member.id !== admin_id) {
-      return await interaction.reply({
-        content: "You do not have permission to use this command.",
-        ephemeral: true,
-      });
-    }
-
     const botMember = await interaction.guild.members.fetch(
       interaction.client.user.id
     );
-    const botColor = botMember.roles.highest.color || embedBotColor;
+    const botColor = botMember.roles.highest.color;
 
     async function sendMessage(message) {
       const embed = new EmbedBuilder()

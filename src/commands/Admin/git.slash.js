@@ -1,12 +1,9 @@
-const {
-  Client,
-  ApplicationCommandOptionType,
-  EmbedBuilder,
-} = require("discord.js");
+const { ApplicationCommandOptionType, EmbedBuilder } = require("discord.js");
 const { exec } = require("child_process");
-const { embedErrorColor, admin_id, embedDark } = require("../../config");
+const { embedErrorColor, embedDark } = require("../../config");
 
 module.exports = {
+  admin: true,
   data: {
     name: "git",
     description: "Execute Git commands",
@@ -49,14 +46,6 @@ module.exports = {
   },
 
   async execute(interaction) {
-    // Permission check (replace with your bot owner's ID)
-    if (interaction.user.id !== admin_id) {
-      return await interaction.reply({
-        content: "You do not have permission to use this command.",
-        ephemeral: true,
-      });
-    }
-
     try {
       await interaction.deferReply();
 
