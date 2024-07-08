@@ -7,6 +7,8 @@ const {
   competingNames,
   customNames,
 } = require("../data/activities");
+const mongoose = require("mongoose");
+const mongoURI = process.env.mongo_uri;
 
 module.exports = {
   name: "ready",
@@ -50,6 +52,15 @@ module.exports = {
 
     setInterval(setRandomActivity, 1000 * 60 * 60);
 
-    console.log("Ready!");
+    if (!mongoURI) return;
+
+    try {
+      await mongoose.connect(mongoURI || "");
+      console.log("Connected to MongoDB");
+    } catch (error) {
+      console.error("Error connecting to MongoDB:", error);
+    }
+
+    console.log("Bot Online!");
   },
 };

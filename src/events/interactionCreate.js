@@ -1,8 +1,10 @@
 const { Interaction } = require("discord.js");
+const modrole = require("../Schemas/modrole");
 
 module.exports = {
   name: "interactionCreate",
   async execute(interaction, client) {
+    // Bug Solved Button
     if (interaction.customId) {
       if (interaction.customId.includes("bugSolved - ")) {
         var stringId = interaction.customId;
@@ -27,6 +29,28 @@ module.exports = {
     const command = client.commands.get(interaction.commandName);
 
     if (!command) return;
+
+    // Mod Role
+    if (command.mod) {
+      var modRoleData = await modrole.find({ Guild: interaction.guild.id });
+      if (modRoleData.length > 0) {
+        var check;
+        await modRoleData.forEach(async (value) => {
+          const mRoles = await interaction.member.roles.cache.map(
+            (role) => role.id
+          );
+          await mRoles.forEach(async (value) => {
+            if (role == value.Role) check = true;
+          });
+        });
+
+        if (!check)
+          return await interaction.reply({
+            content: `Only **moderators** can use this command!`,
+            ephemeral: true,
+          });
+      }
+    }
 
     try {
       await command.execute(interaction, client);
