@@ -45,14 +45,14 @@ module.exports = {
                     value: `\`\`\`${command}\`\`\``,
                   })
                   .addFields({ name: "Output", value: `\`\`\`${output}\`\`\`` })
-                  .setColor(embedDark)
-                  .setFooter({
-                    text: `Executed by ${interaction.user.displayName}`,
-                    iconURL: interaction.user.displayAvatarURL({
-                      dynamic: true,
-                    }),
-                  })
-                  .setTimestamp();
+                  .setColor(embedDark);
+                // .setFooter({
+                //   text: `Executed by ${interaction.user.displayName}`,
+                //   iconURL: interaction.user.displayAvatarURL({
+                //     dynamic: true,
+                //   }),
+                // })
+                // .setTimestamp();
 
                 interaction.editReply({ embeds: [resultEmbed] });
                 resolve();

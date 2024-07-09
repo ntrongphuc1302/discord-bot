@@ -1,87 +1,53 @@
-const {
-  SlashCommandBuilder,
-  PermissionsBitField,
-  EmbedBuilder,
-} = require("discord.js");
+const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
 
 module.exports = {
+  admin: true,
   data: new SlashCommandBuilder()
     .setName("channel")
-    .setDescription("Manage channel locks")
-    .addSubcommand((subcommand) =>
-      subcommand
-        .setName("lock")
-        .setDescription("Locks a channel")
-        .addChannelOption((option) =>
-          option
-            .setName("channel")
-            .setDescription("The channel to lock")
-            .setRequired(true)
+    .setDescription("Locks or unlocks a channel")
+    .addStringOption((option) =>
+      option
+        .setName("action")
+        .setDescription("Lock or unlock the channel")
+        .setRequired(true)
+        .addChoices(
+          { name: "lock", value: "lock" },
+          { name: "unlock", value: "unlock" }
         )
     )
-    .addSubcommand((subcommand) =>
-      subcommand
-        .setName("unlock")
-        .setDescription("Unlocks a channel")
-        .addChannelOption((option) =>
-          option
-            .setName("channel")
-            .setDescription("The channel to unlock")
-            .setRequired(true)
-        )
+    .addChannelOption((option) =>
+      option
+        .setName("channel")
+        .setDescription("The channel to lock or unlock")
+        .setRequired(true)
     ),
   async execute(interaction) {
-    if (
-      !interaction.member.permissions.has(
-        PermissionsBitField.Flags.Administrator
-      )
-    ) {
-      return interaction.reply({
-        content: "You do not have the permissions to use this command.",
-        ephemeral: true,
-      });
-    }
-
-    const subcommand = interaction.options.getSubcommand();
-    let channel = interaction.options.getChannel("channel");
-
     const botMember = await interaction.guild.members.fetch(
       interaction.client.user.id
     );
     const botColor = botMember.roles.highest.color;
 
-    let embedDescription;
+    const action = interaction.options.getString("action");
+    let channel = interaction.options.getChannel("channel");
 
-    switch (subcommand) {
-      case "lock":
-        await channel.permissionOverwrites.edit(
-          interaction.guild.roles.everyone,
-          {
-            SEND_MESSAGES: false,
-          }
-        );
-        embedDescription = `Successfully locked ${channel}`;
-        break;
-      case "unlock":
-        await channel.permissionOverwrites.edit(
-          interaction.guild.roles.everyone,
-          {
-            SEND_MESSAGES: true,
-          }
-        );
-        embedDescription = `Successfully unlocked ${channel}`;
-        break;
-      default:
-        return interaction.reply({
-          content: "Invalid subcommand.",
-          ephemeral: true,
-        });
+    if (action === "lock") {
+      await channel.permissionOverwrites.create(interaction.guild.id, {
+        SendMessages: false,
+        ViewChannel: false,
+      });
+      const embed = new EmbedBuilder()
+        .setColor(botColor)
+        .setDescription(`Successfully locked ${channel}`);
+      await interaction.reply({ embeds: [embed] });
+    } else if (action === "unlock") {
+      await channel.permissionOverwrites.create(interaction.guild.id, {
+        SendMessages: null,
+        ViewChannel: null,
+      });
+      const embed = new EmbedBuilder()
+        .setColor(botColor)
+        .setDescription(`Successfully unlocked ${channel}`);
+      await interaction.reply({ embeds: [embed] });
     }
-
-    const embed = new EmbedBuilder()
-      .setColor(botColor)
-      .setDescription(embedDescription);
-
-    await interaction.reply({ embeds: [embed] });
   },
 };

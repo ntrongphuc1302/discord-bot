@@ -96,12 +96,12 @@ module.exports = {
           .setTitle("Git Command Execution")
           .addFields({ name: "Command", value: `\`\`\`${gitCommand}\`\`\`` })
           .addFields({ name: "Output", value: `\`\`\`${output}\`\`\`` })
-          .setColor(embedDark)
-          .setFooter({
-            text: `Executed by ${interaction.user.displayName}`,
-            iconURL: interaction.user.displayAvatarURL({ dynamic: true }),
-          })
-          .setTimestamp();
+          .setColor(embedDark);
+        // .setFooter({
+        //   text: `Executed by ${interaction.user.displayName}`,
+        //   iconURL: interaction.user.displayAvatarURL({ dynamic: true }),
+        // })
+        // .setTimestamp();
 
         interaction.editReply({ embeds: [resultEmbed] });
       });

@@ -44,12 +44,12 @@ module.exports = {
         const resultEmbed = new EmbedBuilder()
           .setTitle("Terminal Command Execution")
           .setDescription("```" + output + "```")
-          .setColor(botColor)
-          .setFooter({
-            text: `Executed by ${interaction.user.displayName}`,
-            iconURL: interaction.user.displayAvatarURL({ dynamic: true }),
-          })
-          .setTimestamp();
+          .setColor(botColor);
+        // .setFooter({
+        //   text: `Executed by ${interaction.user.displayName}`,
+        //   iconURL: interaction.user.displayAvatarURL({ dynamic: true }),
+        // })
+        // .setTimestamp();
 
         interaction.editReply({ embeds: [resultEmbed] });
       });
