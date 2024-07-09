@@ -35,6 +35,17 @@ module.exports = {
       }
     }
 
+    function formatNumber(num) {
+      if (num >= 1e9) {
+        return (num / 1e9).toFixed(1) + "B";
+      } else if (num >= 1e6) {
+        return (num / 1e6).toFixed(1) + "M";
+      } else if (num >= 1e3) {
+        return (num / 1e3).toFixed(1) + "K";
+      }
+      return num.toString();
+    }
+
     if (user) {
       const data = await lb.findOne({
         Guild: interaction.guild.id,
@@ -47,8 +58,6 @@ module.exports = {
           ephemeral: true,
         });
 
-      const t = (await total()).length;
-
       const botMember = await interaction.guild.members.fetch(
         interaction.client.user.id
       );
@@ -58,13 +67,20 @@ module.exports = {
         .setColor(botColor)
         .setTitle(`${user.displayName}'s Message Standings`)
         .addFields(
-          { name: "Total Messages", value: `\`${data.Messages}\`` },
           {
             name: "Leaderboard Standing",
-            value: `\`${await lbUser(user.id)}\` out of \`${t / 2}\``,
+            value: `\`${await lbUser(user.id)}\``,
+          },
+          {
+            name: "Total Messages",
+            value: `\`${formatNumber(data.Messages)}\``,
           }
-        );
-
+        )
+        .setFooter({
+          text: `Requested by ${interaction.user.displayName}`,
+          iconURL: interaction.user.displayAvatarURL({ dynamic: true }),
+        })
+        .setTimestamp();
       await interaction.reply({ embeds: [embed] });
     } else {
       const data2 = await lb.find({ Guild: interaction.guild.id });
@@ -93,7 +109,9 @@ module.exports = {
       let num = 1;
       for (const value of output) {
         const member = await interaction.guild.members.fetch(value.user);
-        string += `${num}. **${member.user.displayName}** - \`${value.messages}\`\n`;
+        string += `${num}. **${member.user.displayName}** - \`${formatNumber(
+          value.messages
+        )}\`\n`;
         num++;
       }
 
@@ -107,7 +125,12 @@ module.exports = {
         .setTitle(
           `**${interaction.guild.name}**'s Message Leaderboard (Top 10)`
         )
-        .setDescription(string);
+        .setDescription(string)
+        .setFooter({
+          text: `Requested by ${interaction.user.displayName}`,
+          iconURL: interaction.user.displayAvatarURL({ dynamic: true }),
+        })
+        .setTimestamp();
 
       await interaction.reply({ embeds: [embed] });
     }

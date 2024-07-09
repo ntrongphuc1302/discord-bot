@@ -7,6 +7,7 @@ const {
   MessageManager,
   Embed,
   Collection,
+  Events,
 } = require(`discord.js`);
 const fs = require("fs");
 const {
@@ -117,5 +118,157 @@ client.on("interactionCreate", async (interaction) => {
       });
 
     await channel.send({ embeds: [embed] });
+  }
+});
+
+// Join to create voice channel
+const joinschema = require("./Schemas/jointocreate.schema");
+const joinchannelschema = require("./Schemas/jointocreatechannel.schema");
+
+client.on(Events.VoiceStateUpdate, async (oldState, newState) => {
+  try {
+    if (newState.member.guild === null) return;
+  } catch (err) {
+    return;
+  }
+
+  const joindata = await joinschema.findOne({ Guild: newState.guild.id });
+  const joinchanneldata = await joinchannelschema.findOne({
+    Guild: newState.member.guild.id,
+    User: newState.member.id,
+  });
+
+  const voicechannel = newState.channel;
+
+  if (!joindata) return;
+  else {
+    if (voicechannel.id === joindata.Channel) {
+      if (joinchanneldata) {
+        try {
+          return await newState.member.send({
+            content: `You already have a join to create channel`,
+          });
+        } catch (err) {
+          return;
+        }
+      } else {
+        try {
+          const channel = await newState.member.guild.channels.create({
+            type: ChannelType.GuildVoice,
+            name: `${newState.member.user.displayName}'s Channel`,
+            userLimit: joindata.VoiceLimit,
+            parent: joindata.Category,
+          });
+          try {
+            await newState.member.voice.setChannel(channel.id);
+          } catch (err) {
+            return;
+          }
+
+          setTimeout(() => {
+            joinchannelschema.create(
+              {
+                Guild: newState.guild.id,
+                Channel: channel.id,
+                User: newState.member.id,
+              },
+              500
+            );
+          });
+        } catch (err) {
+          try {
+            await newState.member.send({
+              content: `Failed to create voice channel`,
+            });
+          } catch (err) {
+            return;
+          }
+          return;
+        }
+        try {
+          const embed = new EmbedBuilder()
+            .setColor()
+            .setTimestamp()
+            .setAuthor({
+              name: `${newState.member.user.displayName}`,
+              iconURL: `${newState.member.user.displayAvatarURL({
+                dynamic: true,
+              })}`,
+            })
+            .setFooter({
+              text: `Voice Channel Created`,
+              iconURL: `${newState.member.user.displayAvatarURL({
+                dynamic: true,
+              })}`,
+            })
+            .setTitle(`Voice Channel Created`)
+            .addFields({
+              name: `Channel Name`,
+              value: `${newState.member.user.displayName}'s Channel`,
+            });
+
+          await newState.member.send({ embeds: [embed] });
+        } catch (err) {
+          return;
+        }
+      }
+    }
+  }
+});
+
+client.on(Events.VoiceStateUpdate, async (oldState, newState) => {
+  try {
+    if (oldState.member.guild === null) return;
+  } catch (err) {
+    return;
+  }
+
+  const leavechanneldata = await joinchannelschema.findOne({
+    Guild: oldState.member.guild.id,
+    User: oldState.member.id,
+  });
+  if (!leavechanneldata) return;
+  else {
+    const voicechannel = await oldState.member.guild.channels.cache.get(
+      leavechanneldata.Channel
+    );
+
+    try {
+      await voicechannel.delete();
+    } catch (err) {
+      return;
+    }
+
+    await joinchannelschema.deleteMany({
+      Guild: oldState.guild.id,
+      User: oldState.member.id,
+    });
+
+    try {
+      const embed = new EmbedBuilder()
+        .setColor()
+        .setTimestamp()
+        .setAuthor({
+          name: `${oldState.member.user.displayName}`,
+          iconURL: `${oldState.member.user.displayAvatarURL({
+            dynamic: true,
+          })}`,
+        })
+        .setFooter({
+          text: `Voice Channel Deleted`,
+          iconURL: `${oldState.member.user.displayAvatarURL({
+            dynamic: true,
+          })}`,
+        })
+        .setTitle(`Voice Channel Deleted`)
+        .addFields({
+          name: `Channel Name`,
+          value: `${oldState.member.user.displayName}'s Channel`,
+        });
+
+      await oldState.member.send({ embeds: [embed] });
+    } catch (err) {
+      return;
+    }
   }
 });
