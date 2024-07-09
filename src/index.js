@@ -176,6 +176,9 @@ client.on(Events.VoiceStateUpdate, async (oldState, newState) => {
           ),
         });
 
+        // Move the cloned channel below the original channel
+        await clonedChannel.setPosition(originalChannel.rawPosition + 1);
+
         await newState.member.voice.setChannel(clonedChannel.id);
 
         await joinchannelschema.create({
