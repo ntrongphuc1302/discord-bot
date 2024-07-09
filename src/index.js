@@ -165,6 +165,14 @@ client.on(Events.VoiceStateUpdate, async (oldState, newState) => {
           joindata.Channel
         );
 
+        // Fetch the last created channel (if available)
+        let lastCreatedChannel;
+        if (lastCreatedChannelPosition !== 0) {
+          lastCreatedChannel = await newState.guild.channels.fetch(
+            lastCreatedChannelPosition
+          );
+        }
+
         const clonedChannel = await newState.guild.channels.create({
           name: `🗿 ${newState.member.user.displayName}'s Room`,
           type: ChannelType.GuildVoice,
@@ -179,11 +187,17 @@ client.on(Events.VoiceStateUpdate, async (oldState, newState) => {
           ),
         });
 
-        // Set the position of the cloned channel below the last created channel
-        await clonedChannel.setPosition(lastCreatedChannelPosition + 1);
+        // Determine the position to set for the cloned channel
+        let newPosition = originalChannel.rawPosition + 1; // Below the original channel
+        if (lastCreatedChannel) {
+          newPosition = lastCreatedChannel.rawPosition + 1; // Below the last created channel
+        }
+
+        // Set the position of the cloned channel
+        await clonedChannel.setPosition(newPosition);
 
         // Update the last created channel position to current cloned channel
-        lastCreatedChannelPosition = clonedChannel.rawPosition;
+        lastCreatedChannelPosition = clonedChannel.id;
 
         await newState.member.voice.setChannel(clonedChannel.id);
 
