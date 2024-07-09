@@ -31,9 +31,11 @@ module.exports = {
   async execute(interaction) {
     const action = interaction.options.getString("action");
     const channel = interaction.options.getChannel("channel");
-    const data = await voiceschema.findOne({ Guild: interaction.guild.id });
+    const botID = interaction.client.user.id; // Bot ID
 
     if (action === "setup") {
+      const data = await voiceschema.findOne({ Guild: interaction.guild.id });
+
       if (data) {
         return interaction.reply(
           "Join to create voice channel is already setup."
@@ -48,12 +50,12 @@ module.exports = {
 
       await voiceschema.create({
         Guild: interaction.guild.id,
+        User: interaction.user.id,
         Channel: channel.id,
+        BotID: botID,
       });
 
-      const botMember = await interaction.guild.members.fetch(
-        interaction.client.user.id
-      );
+      const botMember = await interaction.guild.members.fetch(botID);
       const botColor = botMember.roles.highest.color;
 
       const embed = new EmbedBuilder()
@@ -64,15 +66,15 @@ module.exports = {
 
       return interaction.reply({ embeds: [embed] });
     } else if (action === "disable") {
+      const data = await voiceschema.findOne({ Guild: interaction.guild.id });
+
       if (!data) {
         return interaction.reply("Join to create voice channel is not setup.");
       }
 
       await voiceschema.findOneAndDelete({ Guild: interaction.guild.id });
 
-      const botMember = await interaction.guild.members.fetch(
-        interaction.client.user.id
-      );
+      const botMember = await interaction.guild.members.fetch(botID);
       const botColor = botMember.roles.highest.color;
 
       const embed = new EmbedBuilder()
