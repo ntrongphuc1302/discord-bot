@@ -31,7 +31,7 @@ module.exports = {
   async execute(interaction) {
     const action = interaction.options.getString("action");
     const channel = interaction.options.getChannel("channel");
-    const botID = interaction.client.user.id; // Bot ID
+    const botID = interaction.client.user.id; // Current bot's ID
 
     if (action === "setup") {
       const data = await voiceschema.findOne({ Guild: interaction.guild.id });
@@ -66,13 +66,19 @@ module.exports = {
 
       return interaction.reply({ embeds: [embed] });
     } else if (action === "disable") {
-      const data = await voiceschema.findOne({ Guild: interaction.guild.id });
+      const data = await voiceschema.findOne({
+        Guild: interaction.guild.id,
+        BotID: botID, // Ensure it's the current bot's setup
+      });
 
       if (!data) {
         return interaction.reply("Join to create voice channel is not setup.");
       }
 
-      await voiceschema.findOneAndDelete({ Guild: interaction.guild.id });
+      await voiceschema.findOneAndDelete({
+        Guild: interaction.guild.id,
+        BotID: botID, // Ensure it's the current bot's setup
+      });
 
       const botMember = await interaction.guild.members.fetch(botID);
       const botColor = botMember.roles.highest.color;
