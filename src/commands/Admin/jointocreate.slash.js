@@ -9,100 +9,81 @@ module.exports = {
   admin: true,
   data: new SlashCommandBuilder()
     .setName("jointocreate")
-    .setDescription("Create a join to create channel")
-    .addSubcommand((command) =>
-      command
-        .setName("setup")
-        .setDescription("Setup a join to create voice channel")
-        .addChannelOption((option) =>
-          option
-            .setName("channel")
-            .setDescription("The channel to create the voice channel in")
-            .setRequired(true)
-            .addChannelTypes(ChannelType.GuildVoice)
-        )
-        .addChannelOption((option) =>
-          option
-            .setName("category")
-            .setDescription("The category to create the voice channel in")
-            .setRequired(true)
-            .addChannelTypes(ChannelType.GuildCategory)
-        )
-        .addIntegerOption((option) =>
-          option
-            .setName("limit")
-            .setDescription("The user limit for the voice channel")
-            .setRequired(true)
+    .setDescription("Setup or disable join to create voice channel")
+    .addStringOption((option) =>
+      option
+        .setName("action")
+        .setDescription("Setup or disable join to create voice channel")
+        .setRequired(true)
+        .addChoices(
+          { name: "setup", value: "setup" },
+          { name: "disable", value: "disable" }
         )
     )
-    .addSubcommand((command) =>
-      command
-        .setName("disable")
-        .setDescription("Disable join to create voice channel")
+    .addChannelOption((option) =>
+      option
+        .setName("channel")
+        .setDescription("The channel to create or disable the voice channel in")
+        .setRequired(true)
+        .addChannelTypes(ChannelType.GuildVoice)
     ),
 
   async execute(interaction) {
+    const action = interaction.options.getString("action");
+    const channel = interaction.options.getChannel("channel");
     const data = await voiceschema.findOne({ Guild: interaction.guild.id });
-    const sub = interaction.options.getSubcommand();
 
-    switch (sub) {
-      case "setup":
-        if (data)
-          return interaction.reply(
-            "Join to create voice channel is already setup"
-          );
-        else {
-          if (data)
-            return interaction.reply(
-              "Join to create voice channel is already setup"
-            );
-          const channel = interaction.options.getChannel("channel");
-          const category = interaction.options.getChannel("category");
-          const limit = interaction.options.getInteger("limit");
+    if (action === "setup") {
+      if (data) {
+        return interaction.reply(
+          "Join to create voice channel is already setup."
+        );
+      }
 
-          await voiceschema.create({
-            Guild: interaction.guild.id,
-            Channel: channel.id,
-            Category: category.id,
-            VoiceLimit: limit,
-          });
+      if (!channel) {
+        return interaction.reply(
+          "Please specify the channel to setup join to create."
+        );
+      }
 
-          const botMember = await interaction.guild.members.fetch(
-            interaction.client.user.id
-          );
-          const botColor = botMember.roles.highest.color;
+      await voiceschema.create({
+        Guild: interaction.guild.id,
+        Channel: channel.id,
+      });
 
-          const embed = new EmbedBuilder()
-            .setColor(botColor)
-            .setDescription(
-              `Successfully setup join to create voice channel in ${category}`
-            );
+      const botMember = await interaction.guild.members.fetch(
+        interaction.client.user.id
+      );
+      const botColor = botMember.roles.highest.color;
 
-          await interaction.reply({ embeds: [embed] });
-        }
+      const embed = new EmbedBuilder()
+        .setColor(botColor)
+        .setDescription(
+          `Successfully setup join to create voice channel in ${channel.name}`
+        );
 
-        break;
-      case "disable":
-        if (!data)
-          return interaction.reply("Join to create voice channel is not setup");
-        else {
-          await voiceschema.findOneAndDelete({ Guild: interaction.guild.id });
+      return interaction.reply({ embeds: [embed] });
+    } else if (action === "disable") {
+      if (!data) {
+        return interaction.reply("Join to create voice channel is not setup.");
+      }
 
-          const botMember = await interaction.guild.members.fetch(
-            interaction.client.user.id
-          );
-          const botColor = botMember.roles.highest.color;
+      await voiceschema.findOneAndDelete({ Guild: interaction.guild.id });
 
-          const embed = new EmbedBuilder()
-            .setColor(botColor)
-            .setDescription(
-              "Successfully disabled join to create voice channel"
-            );
+      const botMember = await interaction.guild.members.fetch(
+        interaction.client.user.id
+      );
+      const botColor = botMember.roles.highest.color;
 
-          await voiceschema.deleteMany({ Guild: interaction.guild.id });
+      const embed = new EmbedBuilder()
+        .setColor(botColor)
+        .setDescription(`Successfully disabled join to create voice channel.`);
 
-          return interaction.reply({ embeds: [embed] });
-        }
+      return interaction.reply({ embeds: [embed] });
+    } else {
+      return interaction.reply(
+        "Please provide a valid action (`setup` or `disable`) for join to create voice channel."
+      );
     }
   },
 };

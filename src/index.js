@@ -127,11 +127,10 @@ client.on("interactionCreate", async (interaction) => {
 const joinschema = require("./Schemas/jointocreate.schema.js");
 const joinchannelschema = require("./Schemas/jointocreatechannel.schema.js");
 
-client.on("voiceStateUpdate", async (oldState, newState) => {
+client.on(Events.VoiceStateUpdate, async (oldState, newState) => {
   try {
     if (newState.member.guild === null) return;
   } catch (err) {
-    console.error("Error checking guild:", err);
     return;
   }
 
@@ -144,42 +143,48 @@ client.on("voiceStateUpdate", async (oldState, newState) => {
   const voicechannel = newState.channel;
 
   if (!joindata) return;
+
   if (!voicechannel) return;
 
   if (voicechannel.id === joindata.Channel) {
     if (joinchanneldata) {
       try {
-        await newState.member.send({
+        return await newState.member.send({
           content: `You already have a join to create channel`,
           ephemeral: true,
         });
       } catch (err) {
-        console.error("Error sending DM:", err);
+        return;
       }
-      return;
     } else {
       try {
-        const channel = await newState.member.guild.channels.create({
-          type: ChannelType.GuildVoice,
+        const originalChannel = await newState.guild.channels.fetch(
+          joindata.Channel
+        );
+
+        const clonedChannel = await newState.guild.channels.create({
           name: `🗿 ${newState.member.user.displayName}'s Room`,
-          userLimit: joindata.VoiceLimit,
-          parent: joindata.Category,
+          type: ChannelType.GuildVoice,
+          parent: originalChannel.parentId,
+          userLimit: originalChannel.userLimit,
+          permissionOverwrites: originalChannel.permissionOverwrites.cache.map(
+            (overwrite) => ({
+              id: overwrite.id,
+              allow: overwrite.allow.bitfield,
+              deny: overwrite.deny.bitfield,
+            })
+          ),
         });
-        try {
-          await newState.member.voice.setChannel(channel.id);
-        } catch (err) {
-          console.error("Error moving member to new channel:", err);
-        }
+
+        await newState.member.voice.setChannel(clonedChannel.id);
 
         await joinchannelschema.create({
           Guild: newState.guild.id,
-          Channel: channel.id,
+          Channel: clonedChannel.id,
           User: newState.member.id,
         });
 
-        // const botMember = await newState.member.guild.members.fetch(
-        //   client.user.id
-        // );
+        // const botMember = await newState.guild.members.fetch(client.user.id);
         // const botColor = botMember.roles.highest.color;
 
         // const embed = new EmbedBuilder()
@@ -205,25 +210,23 @@ client.on("voiceStateUpdate", async (oldState, newState) => {
 
         // await newState.member.send({ embeds: [embed] });
       } catch (err) {
-        console.error("Failed to create voice channel:", err);
         try {
           await newState.member.send({
             content: `Failed to create voice channel`,
             ephemeral: true,
           });
         } catch (err) {
-          console.error("Error sending DM:", err);
+          return;
         }
       }
     }
   }
 });
 
-client.on("voiceStateUpdate", async (oldState, newState) => {
+client.on(Events.VoiceStateUpdate, async (oldState, newState) => {
   try {
     if (oldState.member.guild === null) return;
   } catch (err) {
-    console.error("Error checking guild:", err);
     return;
   }
 
@@ -240,7 +243,6 @@ client.on("voiceStateUpdate", async (oldState, newState) => {
   try {
     await voicechannel.delete();
   } catch (err) {
-    console.error("Error deleting channel:", err);
     return;
   }
 
@@ -249,7 +251,7 @@ client.on("voiceStateUpdate", async (oldState, newState) => {
     User: oldState.member.id,
   });
 
-  // const botMember = await oldState.member.guild.members.fetch(client.user.id);
+  // const botMember = await oldState.guild.members.fetch(client.user.id);
   // const botColor = botMember.roles.highest.color;
 
   // const embed = new EmbedBuilder()
@@ -269,9 +271,5 @@ client.on("voiceStateUpdate", async (oldState, newState) => {
   //     value: `🗿 ${oldState.member.user.displayName}'s Room`,
   //   });
 
-  // try {
-  //   await oldState.member.send({ embeds: [embed] });
-  // } catch (err) {
-  //   console.error("Error sending DM:", err);
-  // }
+  // await oldState.member.send({ embeds: [embed] });
 });
