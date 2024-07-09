@@ -1,10 +1,9 @@
 const {
   SlashCommandBuilder,
-  PermissionsBitField,
   EmbedBuilder,
   ChannelType,
 } = require("discord.js");
-const voiceschema = require("../../Schemas/jointocreate.schema");
+const voiceschema = require("../../Schemas/jointocreate.schema.js");
 
 module.exports = {
   admin: true,
@@ -79,7 +78,7 @@ module.exports = {
               `Successfully setup join to create voice channel in ${category}`
             );
 
-          return interaction.reply({ embeds: [embed] });
+          await interaction.reply({ embeds: [embed] });
         }
 
         break;
