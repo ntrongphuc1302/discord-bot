@@ -127,6 +127,9 @@ client.on("interactionCreate", async (interaction) => {
 const joinschema = require("./Schemas/jointocreate.schema.js");
 const joinchannelschema = require("./Schemas/jointocreatechannel.schema.js");
 
+// Define a global variable to keep track of the last created channel's position
+let lastCreatedChannelPosition = 0;
+
 client.on(Events.VoiceStateUpdate, async (oldState, newState) => {
   try {
     if (newState.member.guild === null) return;
@@ -176,8 +179,11 @@ client.on(Events.VoiceStateUpdate, async (oldState, newState) => {
           ),
         });
 
-        // Move the cloned channel below the original channel
-        await clonedChannel.setPosition(originalChannel.rawPosition + 1);
+        // Set the position of the cloned channel below the last created channel
+        await clonedChannel.setPosition(lastCreatedChannelPosition + 1);
+
+        // Update the last created channel position to current cloned channel
+        lastCreatedChannelPosition = clonedChannel.rawPosition;
 
         await newState.member.voice.setChannel(clonedChannel.id);
 
@@ -187,31 +193,34 @@ client.on(Events.VoiceStateUpdate, async (oldState, newState) => {
           User: newState.member.id,
         });
 
-        // const botMember = await newState.guild.members.fetch(client.user.id);
-        // const botColor = botMember.roles.highest.color;
+        // Notify the member about the channel creation (optional)
+        /*
+        const botMember = await newState.guild.members.fetch(client.user.id);
+        const botColor = botMember.roles.highest.color;
 
-        // const embed = new EmbedBuilder()
-        //   .setColor(botColor)
-        //   .setTimestamp()
-        //   .setAuthor({
-        //     name: `${newState.member.user.displayName}`,
-        //     iconURL: `${newState.member.user.displayAvatarURL({
-        //       dynamic: true,
-        //     })}`,
-        //   })
-        //   .setFooter({
-        //     text: `Voice Channel Created`,
-        //     iconURL: `${newState.member.user.displayAvatarURL({
-        //       dynamic: true,
-        //     })}`,
-        //   })
-        //   .setTitle(`Voice Channel Created`)
-        //   .addFields({
-        //     name: `Channel Name`,
-        //     value: `🗿 ${newState.member.user.displayName}'s Room`,
-        //   });
+        const embed = new EmbedBuilder()
+          .setColor(botColor)
+          .setTimestamp()
+          .setAuthor({
+            name: `${newState.member.user.displayName}`,
+            iconURL: `${newState.member.user.displayAvatarURL({
+              dynamic: true,
+            })}`,
+          })
+          .setFooter({
+            text: `Voice Channel Created`,
+            iconURL: `${newState.member.user.displayAvatarURL({
+              dynamic: true,
+            })}`,
+          })
+          .setTitle(`Voice Channel Created`)
+          .addFields({
+            name: `Channel Name`,
+            value: `🗿 ${newState.member.user.displayName}'s Room`,
+          });
 
-        // await newState.member.send({ embeds: [embed] });
+        await newState.member.send({ embeds: [embed] });
+        */
       } catch (err) {
         try {
           await newState.member.send({
