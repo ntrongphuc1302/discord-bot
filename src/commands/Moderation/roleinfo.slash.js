@@ -1,7 +1,7 @@
 const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
 
 module.exports = {
-  admin: true,
+  mod: true,
   data: new SlashCommandBuilder()
     .setName("roleinfo")
     .setDescription("Get information about a specific role.")
