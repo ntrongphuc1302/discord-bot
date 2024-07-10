@@ -13,35 +13,57 @@ module.exports = {
     try {
       await interaction.deferReply();
 
-      const command =
-        "git pull origin main && npm i && npm i pm2 -g && pm2 restart 0";
+      // Array of commands to execute sequentially
+      const commands = [
+        "git pull origin main",
+        "npm i",
+        "npm i pm2 -g",
+        "pm2 restart 0",
+      ];
 
-      exec(command, (error, stdout, stderr) => {
-        if (error) {
-          console.error(`Error executing command: ${error}`);
-          const errEmbed = new EmbedBuilder()
-            .setTitle("An error occurred")
-            .setDescription("```" + error.message + "```")
-            .setColor(embedErrorColor);
+      // Function to execute each command in the array
+      const executeCommands = async (commands) => {
+        for (const command of commands) {
+          await new Promise((resolve) => {
+            exec(command, (error, stdout, stderr) => {
+              if (error) {
+                console.error(`Error executing command: ${error}`);
+                const errEmbed = new EmbedBuilder()
+                  .setTitle("An error occurred")
+                  .setDescription("```" + error.message + "```")
+                  .setColor(embedErrorColor);
 
-          interaction.editReply({ embeds: [errEmbed], ephemeral: true });
-        } else {
-          const output = stdout || stderr || "No output";
+                interaction.editReply({ embeds: [errEmbed], ephemeral: true });
+                resolve();
+              } else {
+                const output = stdout || stderr || "No output";
 
-          const resultEmbed = new EmbedBuilder()
-            .setTitle("Command Execution")
-            .addFields({ name: "Command", value: `\`\`\`${command}\`\`\`` })
-            .addFields({ name: "Output", value: `\`\`\`${output}\`\`\`` })
-            .setColor(embedDark)
-            .setFooter({
-              text: `Executed by ${interaction.user.displayName}`,
-              iconURL: interaction.user.displayAvatarURL({ dynamic: true }),
-            })
-            .setTimestamp();
+                const resultEmbed = new EmbedBuilder()
+                  .setTitle("Command Execution")
+                  .addFields({
+                    name: "Command",
+                    value: `\`\`\`${command}\`\`\``,
+                  })
+                  .addFields({ name: "Output", value: `\`\`\`${output}\`\`\`` })
+                  .setColor(embedDark);
+                // .setFooter({
+                //   text: `Executed by ${interaction.user.displayName}`,
+                //   iconURL: interaction.user.displayAvatarURL({
+                //     dynamic: true,
+                //   }),
+                // })
+                // .setTimestamp();
 
-          interaction.editReply({ embeds: [resultEmbed] });
+                interaction.editReply({ embeds: [resultEmbed] });
+                resolve();
+              }
+            });
+          });
         }
-      });
+      };
+
+      // Execute commands sequentially
+      await executeCommands(commands);
     } catch (error) {
       console.error(`Error executing command: ${error}`);
       const errEmbed = new EmbedBuilder()
