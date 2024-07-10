@@ -15,10 +15,7 @@ module.exports = {
 
       // Array of commands to execute sequentially
       const commands = [
-        "git pull origin main",
-        "npm i",
-        "npm i pm2 -g",
-        "pm2 restart 0",
+        "git pull origin main && npm i && npm i pm2 -g && pm2 restart 0",
       ];
 
       // Function to execute each command in the array
