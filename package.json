@@ -31,6 +31,8 @@
     "pm2": "^5.4.1",
     "puppeteer": "^22.12.1",
     "replicate": "^0.30.2",
+    "steam-totp": "^2.1.2",
+    "steam-user": "^5.0.10",
     "superagent": "^9.0.2"
   }
 }
