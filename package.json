@@ -3,8 +3,9 @@
   "version": "1.0.0",
   "main": "src/index.js",
   "scripts": {
-    "test": "node src/index.js",
-    "dev": "nodemon src/index.js"
+    "dev": "npm run clean && npm install && nodemon src/index.js",
+    "clean": "rm -rf node_modules",
+    "reinstall": "npm run clean && npm install"
   },
   "repository": {
     "type": "git",
