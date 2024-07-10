@@ -6,41 +6,35 @@ const {
 const modrole = require("../../Schemas/modrole");
 
 module.exports = {
+  admin: true,
   data: new SlashCommandBuilder()
     .setName("modrole")
-    .setDescription("Mod Role")
-    .addSubcommand((command) =>
-      command
-        .setName("add")
-        .setDescription("Add a mod role to the database")
-        .addRoleOption((option) =>
-          option
-            .setName("role")
-            .setDescription("The role to add")
-            .setRequired(true)
+    .setDescription("Manage mod roles")
+    .addStringOption((option) =>
+      option
+        .setName("action")
+        .setDescription("The action to perform")
+        .setRequired(true)
+        .addChoices(
+          { name: "Add", value: "add" },
+          { name: "Remove", value: "remove" },
+          { name: "Check", value: "check" }
         )
     )
-    .addSubcommand((command) =>
-      command
-        .setName("remove")
-        .setDescription("Remove a mod role from the database")
-        .addRoleOption((option) =>
-          option
-            .setName("role")
-            .setDescription("The role to remove")
-            .setRequired(true)
-        )
-    )
-    .addSubcommand((command) =>
-      command.setName("check").setDescription("Check the mod role(s)")
+    .addRoleOption((option) =>
+      option
+        .setName("role")
+        .setDescription("The role to add or remove (required for add/remove)")
+        .setRequired(false)
     ),
 
   async execute(interaction) {
     await interaction.deferReply({ ephemeral: true });
 
     const { options } = interaction;
-    const sub = options.getSubcommand();
-    var data = await modrole.find({ Guild: interaction.guild.id });
+    const action = options.getString("action");
+    const role = options.getRole("role");
+    const data = await modrole.find({ Guild: interaction.guild.id });
 
     async function sendMessage(message) {
       const botMember = await interaction.guild.members.fetch(
@@ -58,8 +52,7 @@ module.exports = {
     }
 
     async function checkData() {
-      var role = options.getRole("role");
-      return data.some((value) => value.Role == role.id);
+      return data.some((value) => value.Role === role.id);
     }
 
     if (
@@ -71,12 +64,10 @@ module.exports = {
         "You do not have permission to use this command."
       );
 
-    switch (sub) {
+    switch (action) {
       case "add":
-        var check = await checkData();
-        var role = options.getRole("role");
-
-        if (check) {
+        if (!role) return await sendMessage("You must provide a role to add.");
+        if (await checkData()) {
           return await sendMessage("Looks like that is already a mod role.");
         } else {
           await modrole.create({
@@ -89,10 +80,9 @@ module.exports = {
           );
         }
       case "remove":
-        var check = await checkData();
-        var role = options.getRole("role");
-
-        if (!check) {
+        if (!role)
+          return await sendMessage("You must provide a role to remove.");
+        if (!(await checkData())) {
           return await sendMessage("Looks like that is not a mod role.");
         } else {
           await modrole.deleteOne({
@@ -104,18 +94,18 @@ module.exports = {
           );
         }
       case "check":
-        var values = data.map(async (value) => {
-          if (!value.Role) return;
-          var r = await interaction.guild.roles.cache.get(value.Role);
-          return `**Role Name:** ${r.name} **Role ID:** ${r.id}`;
-        });
+        const values = await Promise.all(
+          data.map(async (value) => {
+            if (!value.Role) return;
+            const r = await interaction.guild.roles.cache.get(value.Role);
+            return `**Role Name:** ${r.name} **Role ID:** ${r.id}`;
+          })
+        );
 
-        values = await Promise.all(values);
+        const filteredValues = values.filter(Boolean);
 
-        values = values.filter(Boolean);
-
-        if (values.length > 0) {
-          await sendMessage(`**Mod Roles:**\n${values.join("\n")}`);
+        if (filteredValues.length > 0) {
+          await sendMessage(`**Mod Roles:**\n${filteredValues.join("\n")}`);
         } else {
           await sendMessage("There are no mod roles set.");
         }

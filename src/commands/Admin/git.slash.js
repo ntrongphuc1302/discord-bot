@@ -34,6 +34,10 @@ module.exports = {
             name: "pull",
             value: "pull",
           },
+          {
+            name: "auto",
+            value: "auto",
+          },
         ],
       },
       {
@@ -71,6 +75,10 @@ module.exports = {
           break;
         case "pull":
           gitCommand = "git pull origin main";
+          break;
+        case "auto":
+          gitCommand =
+            "git add . && git commit -m 'update' && git push -u origin main";
           break;
         default:
           return await interaction.editReply({
