@@ -22,7 +22,7 @@ module.exports = {
     try {
       await interaction.deferReply();
 
-      const botToUpdate = interaction.options.getString("bot");
+      const botToUpdate = interaction.options.getString("option");
 
       let commands = [];
 
