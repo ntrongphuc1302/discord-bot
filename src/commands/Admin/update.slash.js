@@ -29,7 +29,7 @@ module.exports = {
       if (botToUpdate === "bot") {
         commands = [
           "git pull origin main",
-          "npm i",
+          "npm run reinstall",
           "npm i pm2 -g",
           "pm2 restart 0",
         ];
