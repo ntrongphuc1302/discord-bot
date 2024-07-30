@@ -5,7 +5,7 @@ const Data = require("../../Schemas/data");
 module.exports = {
   admin: true,
   data: new SlashCommandBuilder()
-    .setName("listdata")
+    .setName("getalldata")
     .setDescription("Show all data"),
   async execute(interaction, client) {
     try {
