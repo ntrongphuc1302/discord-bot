@@ -7,38 +7,32 @@ module.exports = {
   data: new SlashCommandBuilder()
     .setName("getdata")
     .setDescription("Retrieve data by ID or name")
-    .addIntegerOption(
-      (option) =>
-        option
-          .setName("id")
-          .setDescription("The ID of the data to retrieve")
-          .setRequired(false)
-          .setAutocomplete(true) // Enable autocomplete for ID
-    )
-    .addStringOption(
-      (option) =>
-        option
-          .setName("name")
-          .setDescription("The name associated with the data")
-          .setRequired(false)
-          .setAutocomplete(true) // Enable autocomplete for name
+    .addStringOption((option) =>
+      option
+        .setName("input")
+        .setDescription("The ID or name of the data to retrieve")
+        .setRequired(true)
     ),
   async execute(interaction, client) {
-    const id = interaction.options.getInteger("id");
-    const name = interaction.options.getString("name");
+    const input = interaction.options.getString("input");
 
     try {
       let data;
 
-      if (id) {
-        data = await Data.findOne({ id });
-      } else if (name) {
-        data = await Data.findOne({ name });
+      if (!isNaN(input)) {
+        // If the input is a number, treat it as an ID
+        data = await Data.findOne({ id: parseInt(input, 10) });
+      } else {
+        // If the input is a string, treat it as a name and use regex for partial match
+        const nameRegex = new RegExp(input, "i"); // Case-insensitive regex
+        data = await Data.findOne({ name: nameRegex });
       }
 
       if (!data) {
         await interaction.reply({
-          content: `No data found with ${id ? `ID ${id}` : `name ${name}`}.`,
+          content: `No data found with ${
+            !isNaN(input) ? `ID ${input}` : `name ${input}`
+          }.`,
           ephemeral: true,
         });
         return;
