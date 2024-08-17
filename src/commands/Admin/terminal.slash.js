@@ -1,5 +1,6 @@
 const { ApplicationCommandOptionType, EmbedBuilder } = require("discord.js");
 const { exec } = require("child_process");
+const path = require("path");
 const { embedErrorColor } = require("../../config");
 
 module.exports = {
@@ -28,7 +29,11 @@ module.exports = {
 
       const command = interaction.options.getString("command");
 
-      exec(command, (error, stdout, stderr) => {
+      // Calculate the parent directory of the current script location
+      const scriptDirectory = __dirname;
+      const parentDirectory = path.resolve(scriptDirectory, "..");
+
+      exec(command, { cwd: parentDirectory }, (error, stdout, stderr) => {
         if (error) {
           console.error(`Error executing command: ${error}`);
           const errEmbed = new EmbedBuilder()
