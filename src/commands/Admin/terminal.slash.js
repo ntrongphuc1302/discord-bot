@@ -29,35 +29,46 @@ module.exports = {
 
       const command = interaction.options.getString("command");
 
-      // Calculate the parent directory of the current script location
+      // Calculate the grandparent directory of /home/peter/discord-bot/src/commands
+      // which is /home/peter
       const scriptDirectory = __dirname;
-      const parentDirectory = path.resolve(scriptDirectory, "..");
+      const greatGrandparentDirectory = path.resolve(
+        scriptDirectory,
+        "../../../.."
+      );
 
-      exec(command, { cwd: parentDirectory }, (error, stdout, stderr) => {
-        if (error) {
-          console.error(`Error executing command: ${error}`);
-          const errEmbed = new EmbedBuilder()
-            .setTitle("An error occurred")
-            .setDescription("```" + error.message + "```")
-            .setColor(embedErrorColor);
+      exec(
+        command,
+        { cwd: greatGrandparentDirectory },
+        (error, stdout, stderr) => {
+          if (error) {
+            console.error(`Error executing command: ${error}`);
+            const errEmbed = new EmbedBuilder()
+              .setTitle("An error occurred")
+              .setDescription("```" + error.message + "```")
+              .setColor(embedErrorColor);
 
-          return interaction.editReply({ embeds: [errEmbed], ephemeral: true });
+            return interaction.editReply({
+              embeds: [errEmbed],
+              ephemeral: true,
+            });
+          }
+
+          const output = stdout || stderr || "No output";
+
+          const resultEmbed = new EmbedBuilder()
+            .setTitle("Terminal Command Execution")
+            .setDescription("```" + output + "```")
+            .setColor(botColor);
+          // .setFooter({
+          //   text: `Executed by ${interaction.user.displayName}`,
+          //   iconURL: interaction.user.displayAvatarURL({ dynamic: true }),
+          // })
+          // .setTimestamp();
+
+          interaction.editReply({ embeds: [resultEmbed] });
         }
-
-        const output = stdout || stderr || "No output";
-
-        const resultEmbed = new EmbedBuilder()
-          .setTitle("Terminal Command Execution")
-          .setDescription("```" + output + "```")
-          .setColor(botColor);
-        // .setFooter({
-        //   text: `Executed by ${interaction.user.displayName}`,
-        //   iconURL: interaction.user.displayAvatarURL({ dynamic: true }),
-        // })
-        // .setTimestamp();
-
-        interaction.editReply({ embeds: [resultEmbed] });
-      });
+      );
     } catch (error) {
       console.error(`Error executing command: ${error}`);
       const errEmbed = new EmbedBuilder()
