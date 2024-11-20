@@ -36,8 +36,8 @@ require("dotenv").config();
 // Auto-generate .env-example
 function generateEnvExample() {
   try {
-    // Directory to scan
-    const directoryToScan = __dirname;
+    // Set the project root directory
+    const projectRoot = path.resolve(__dirname, ".."); // One folder up from src
 
     // Recursive function to scan files
     function scanForFiles(dir) {
@@ -47,7 +47,10 @@ function generateEnvExample() {
         const filePath = path.join(dir, file);
         const stat = fs.statSync(filePath);
         if (stat && stat.isDirectory()) {
-          results = results.concat(scanForFiles(filePath));
+          // Exclude node_modules and other irrelevant folders
+          if (file !== "node_modules" && file !== ".git") {
+            results = results.concat(scanForFiles(filePath));
+          }
         } else if (file.endsWith(".js")) {
           results.push(filePath);
         }
@@ -56,7 +59,7 @@ function generateEnvExample() {
     }
 
     // Scan for environment variables
-    const jsFiles = scanForFiles(directoryToScan);
+    const jsFiles = scanForFiles(projectRoot);
     const envVariables = new Set();
 
     jsFiles.forEach((file) => {
@@ -68,8 +71,8 @@ function generateEnvExample() {
       }
     });
 
-    // Write to .env-example
-    const exampleFilePath = path.join(directoryToScan, ".env-example");
+    // Write to .env-example at the project root
+    const exampleFilePath = path.join(projectRoot, ".env-example");
     const envContent = Array.from(envVariables)
       .sort()
       .map((key) => `${key}=`)
