@@ -65,7 +65,7 @@ module.exports = {
           if (!commitMessage) {
             commitMessage = "update"; // Default commit message
           }
-          gitCommand = `git commit -m "${commitMessage}"`;
+          gitCommand = `git commit -m ${commitMessage}`;
           break;
         case "push":
           gitCommand = "git push -u origin main";
