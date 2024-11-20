@@ -65,8 +65,9 @@ module.exports = {
           if (!commitMessage) {
             commitMessage = "update"; // Default commit message
           }
-          gitCommand = `git commit -m ${commitMessage}`;
+          gitCommand = `git commit -m "${commitMessage}"`; // Use double quotes here
           break;
+
         case "push":
           gitCommand = "git push -u origin main";
           break;
@@ -78,7 +79,7 @@ module.exports = {
           break;
         case "auto":
           gitCommand =
-            "git add . && git commit -m 'update' && git push -u origin main";
+            "git add . && git commit -m update && git push -u origin main";
           break;
         default:
           return await interaction.editReply({
